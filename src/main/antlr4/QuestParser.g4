@@ -71,7 +71,7 @@ variableDeclaratorList
 
 // TODO
 variableDeclarator
-    :  USE SERVICEID newlines? '.' newlines? SERVICEID ('(' varId? ')')
+    :  USE SERVICEID newlines? '.' newlines? SERVICEID ('(' (varId(',' varId)*)? ')')
     ;
 
 variableDeclaratorId
