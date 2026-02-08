@@ -31,6 +31,8 @@ FALSE: 'false';
 USE: 'use';
 KIND: 'kind';
 PROCESS: 'process';
+EXTENDS: 'extends';
+SUPER: 'super';
 
 BODY
     : 'body'
@@ -47,6 +49,7 @@ SEMI: ';';
 COMMA: ',';
 COLON: ':';
 ARROW: '->';
+QUESTION : '?';
 
 WS: [ \t\r\n]+ -> skip;
 
@@ -64,6 +67,11 @@ RBRACK : ']';
 
 // 系统换行
 NEWLINE : '\r' '\n'? | '\n';
+
+fragment ServiceId
+    : [\u0041-\u005A]
+    | [\u0061-\u007A]
+    ;
 
 fragment IdStart
     // #
@@ -318,6 +326,8 @@ fragment IdPart
 	| [\uFF10-\uFF19]
 	| [\uFFF9-\uFFFB]
 	;
+
+SERVICEID: ServiceId;
 
 ID
     :   IdStart IdPart*
