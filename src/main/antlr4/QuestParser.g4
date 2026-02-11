@@ -37,7 +37,7 @@ blockStatement
     |   WHILE '(' newlines? expression newlines? ')' '{' newlines? blockStatements? newlines? '}' # whileStatement
     |   FOR '(' newlines? forInit (forCondition=expression)? ';' newlines? (forUpdate=expression)? newlines? ')' '{' newlines? blockStatements? newlines? '}' # traditionalForStatement
     |   FOR '(' newlines? declType? varId ':' expression newlines? ')' '{' newlines? blockStatements? newlines? '}' # forEachStatement
-    |   FUNCTION varId '(' newlines? formalOrInferredParameterList? newlines? ')' LBRACE newlines? blockStatements? newlines? RBRACE # functionStatement
+    |   declType? FUNCTION varId '(' newlines? formalOrInferredParameterList? newlines? ')' LBRACE newlines? blockStatements? newlines? RBRACE # functionStatement
     |   MACRO varId LBRACE newlines? blockStatements? newlines? RBRACE # macroStatement
     |   (BREAK | CONTINUE) nextStatement # breakContinueStatement
     |   RETURN expression? nextStatement # returnStatement

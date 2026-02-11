@@ -300,7 +300,8 @@ public class CodeGenerator {
      * 辅助方法：获取缩进字符串
      */
     private String getIndent() {
-        return "    ".repeat(Math.max(0, indentLevel));
+        return "    ";
+//        return "    ".r(Math.max(0, indentLevel));
     }
 
     /**
