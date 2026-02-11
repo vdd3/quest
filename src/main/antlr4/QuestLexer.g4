@@ -319,8 +319,8 @@ LINE_COMMENT
     ;
 
 fragment ServiceId
-    : [\u0041-\u005A]
-    | [\u0061-\u007A]
+    : [\u0041-\u005A]*
+    | [\u0061-\u007A]*
     ;
 
 fragment IdStart
