@@ -26,30 +26,243 @@ DOUBLE: 'double' | '双精度';
 CHAR: 'char' | '字符';
 BOOL: 'boolean' | '布尔';
 NULL: 'null' | '空';
-TRUE: 'true' | '真' | '是';
+TRUE: 'true' | '是';
 FALSE: 'false' | '否';
 USE: 'use' | '使用';
 KIND: 'kind';
 PROCESS: 'process' | '处理';
 EXTENDS: 'extends' | '继承';
 SUPER: 'super' | '超类';
+TRY: 'try' | '捕获';
+CATCH: 'catch' | '处理异常';
+FINALLY: 'finally' | '必须';
+THROW: 'throw' | '抛出';
 
-BODY
-    : 'body'
+// kind类型
+KIND_SERVICE: 'service';
+KIND_AGENT: 'agent';
+KIND_ROUTE: 'route';
+
+// unuseful now, but reserve them for future
+CLASS: 'class' | '类';
+THIS: 'this' | '当前类';
+
+// String Literals
+
+QuoteStringLiteral
+    :   '\'' QuoteStringCharacters? '\''
     ;
 
-// 文字常量
-STRING
-    : '"' (~'"'|'\\"')* '"'
+fragment QuoteStringCharacters
+    :   QuoteStringCharacter+
     ;
 
-// 分隔符
+fragment QuoteStringCharacter
+    :   ~['\\]
+    |   '\\' '\''?
+    ;
+
+fragment ZeroToThree
+	:	[0-3]
+	;
+
+fragment OctalDigit
+	:	[0-7]
+	;
+
+fragment HexDigit
+	:	[0-9a-fA-F]
+	;
+
+// Number Literals
+
+IntegerLiteral
+    :   HexIntegerLiteral
+    |   OctalIntegerLiteral
+    |   BinaryIntegerLiteral
+    ;
+
+FloatingPointLiteral
+    :   '.' Digits ExponentPart? FloatTypeSuffix?
+    |   DecimalNumeral ExponentPart FloatTypeSuffix?
+    |   DecimalNumeral FloatTypeSuffix
+    ;
+
+IntegerOrFloatingLiteral
+    // 1l 1. 1.2 1.2e3 1.2e3f
+    :   DecimalNumeral IntegerOrFloating?
+    ;
+
+fragment IntegerOrFloating
+    :   IntegerTypeSuffix
+    |   {
+            !(
+                ( (_input.LA(2) >= 'a' && _input.LA(2) <= 'z') || (_input.LA(2) >= 'A' && _input.LA(2) <= 'Z') )
+                &&
+                ( (_input.LA(3) >= 'a' && _input.LA(3) <= 'z') || (_input.LA(3) >= 'A' && _input.LA(3) <= 'Z') )
+            )
+        }? '.' Digits? ExponentPart? FloatTypeSuffix?
+    ;
+
+fragment BinaryIntegerLiteral
+    :   BinaryNumeral IntegerTypeSuffix?
+    ;
+
+fragment BinaryNumeral
+    :   '0' [bB] BinaryDigits
+    ;
+
+fragment BinaryDigits
+    :   BinaryDigit (BinaryDigitsAndUnderscores? BinaryDigit)?
+    ;
+
+fragment BinaryDigit
+    :   [01]
+    ;
+
+fragment BinaryDigitsAndUnderscores
+    :   BinaryDigitOrUnderscore+
+    ;
+
+fragment BinaryDigitOrUnderscore
+    :   BinaryDigit
+    |   '_'
+    ;
+
+fragment OctalIntegerLiteral
+    :   OctalNumeral IntegerTypeSuffix?
+    ;
+
+fragment OctalNumeral
+    :   '0' Underscores? OctalDigits
+    ;
+
+fragment OctalDigits
+    :   OctalDigit (OctalDigitsAndUnderscores? OctalDigit)?
+    ;
+
+fragment OctalDigitsAndUnderscores
+    :   OctalDigitOrUnderscore+
+    ;
+
+fragment OctalDigitOrUnderscore
+    :   OctalDigit
+    |   '_'
+    ;
+
+fragment HexIntegerLiteral
+    :   HexNumeral IntegerTypeSuffix?
+    ;
+
+fragment HexNumeral
+    :   '0' [xX] HexDigits
+    ;
+
+fragment HexDigits
+    :   HexDigit (HexDigitsAndUnderscores? HexDigit)?
+    ;
+
+fragment HexDigitsAndUnderscores
+    :   HexDigitOrUnderscore+
+    ;
+
+fragment HexDigitOrUnderscore
+    :   HexDigit
+    |   '_'
+    ;
+
+fragment DecimalIntegerLiteral
+    :   DecimalNumeral IntegerTypeSuffix?
+    ;
+
+fragment IntegerTypeSuffix
+    :   [lL]
+    ;
+
+fragment DecimalNumeral
+    :   '0'
+    |   NonZeroDigit (Digits? | Underscores Digits)
+    ;
+
+fragment Underscores
+    :   '_'+
+    ;
+
+
+fragment NonZeroDigit
+	:	[1-9]
+	;
+
+fragment Digits
+	:	Digit (DigitsAndUnderscores? Digit)?
+	;
+
+fragment Digit
+	:	'0'
+	|	NonZeroDigit
+	;
+
+fragment DigitsAndUnderscores
+	:	DigitOrUnderscore+
+	;
+
+fragment DigitOrUnderscore
+    :   Digit
+    |   '_'
+    ;
+
+fragment HexSignificand
+    :   HexNumeral '.'?
+    |   '0' [xX] HexDigits? '.' HexDigits
+    ;
+
+fragment BinaryExponent
+    :   BinaryExponentIndicator SignedInteger
+    ;
+
+fragment BinaryExponentIndicator
+    :   [pP]
+    ;
+
+fragment FloatTypeSuffix
+    :   [fFdD]
+    ;
+
+fragment ExponentPart
+    :   ExponentIndicator SignedInteger
+    ;
+
+fragment SignedInteger
+    :   Sign? Digits
+    ;
+
+fragment Sign
+    :   [+-]
+    ;
+
+fragment ExponentIndicator
+    :   [eE]
+    ;
+
+// operator
+
+LPAREN : '(';
+RPAREN : ')';
+LBRACE : '{';
+RBRACE : '}';
+LBRACK : '[';
+RBRACK : ']';
+
+
+// system operator
+
 DOT : '.';
-SEMI: ';';
-COMMA: ',';
-COLON: ':';
-ARROW: '->';
+ARROW : '->';
+SEMI : ';';
+COMMA : ',';
 QUESTION : '?';
+COLON : ':';
+DCOLON: '::';
 GT : '>';
 LT : '<';
 EQ : '=';
@@ -75,22 +288,35 @@ MOD_ASSIGN: '%=';
 DIV_ASSIGN: '/=';
 XOR_ASSIGN: '^=';
 
-WS: [ \t\r\n]+ -> skip;
+// prefix suffix operator
+BANG : '!';
+TILDE : '~';
 
-COMMENT
-    : '//' ~[\r\n]* -> skip
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+BIT_AND: '&';
+BIT_OR: '|';
+MOD: '%';
+
+INC: '++';
+DEC: '--';
+
+// Whitespace and comments
+
+NEWLINE : '\r' '\n'? | '\n';
+
+WS  :  [ \t\u000C]+ -> skip
     ;
 
-// 操作符
-LPAREN : '(';
-RPAREN : ')';
-LBRACE : '{';
-RBRACE : '}';
-LBRACK : '[';
-RBRACK : ']';
+COMMENT
+    :   '/*' .*? '*/' -> skip
+    ;
 
-// 系统换行
-NEWLINE : '\r' '\n'? | '\n';
+LINE_COMMENT
+    :   '//' ~[\r\n]* -> skip
+    ;
 
 fragment ServiceId
     : [\u0041-\u005A]
@@ -352,6 +578,10 @@ fragment IdPart
 	;
 
 SERVICEID: ServiceId;
+
+// Spring Bean相关标识符
+BEAN_ID: [A-Z] [a-z]*;  // 首字母大写的Bean名称
+METHOD_ID: [a-z] [a-z]*;  // 小写的方法名
 
 ID
     :   IdStart IdPart*
