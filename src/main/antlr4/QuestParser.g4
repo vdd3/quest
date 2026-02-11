@@ -42,6 +42,11 @@ kindStatement
     : KIND varId SEMI
     ;
 
+// FUNCTION模块
+functionStatement
+    : declType? FUNCTION varId LPAREN (newlines? parameterList)? newlines? RPAREN (newlines? block)?
+    ;
+
 newlines : NEWLINE+;
 
 // decl type
@@ -51,7 +56,7 @@ declType
     ;
 
 primitiveType
-    :   'byte'
+    :   BYTE
     |   'short'
     |   'int'
     |   'long'
@@ -102,8 +107,8 @@ wildcard
     ;
 
 wildcardBounds
-    :   'extends' referenceType
-    |   'super' referenceType
+    :   EXTENDS referenceType
+    |   SUPER referenceType
     ;
 
 dims
