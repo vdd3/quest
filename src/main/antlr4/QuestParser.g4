@@ -1,367 +1,154 @@
 parser grammar QuestParser;
 
-@header {
-    package cn.easygd.quest.core;
-}
-
 options {
     tokenVocab = QuestLexer;
 }
 
-program
-    : kindStament newlines? blockStatements? EOF
-    ;
+@header {
+    package cn.easygd.quest.core;
+}
 
-kindStament
-    : KIND ':' kindList
-    ;
+// 脚本顶层规则
+script: kindDeclaration module* EOF;
 
-kindList
-    : KIND_SERVICE
-    | KIND_AGENT
-    | KIND_ROUTE
-    ;
+// kind声明规则
+kindDeclaration: AT KIND kindType;
 
-blockStatements
-    :   blockStatement+
-    ;
+// kind类型规则
+kindType: SERVICE | PRD;
 
-newlines : NEWLINE+;
+// 模块通用规则
+module: serviceModule | prdModule;
 
-nextStatement
-    : {_input.LA(1) == Token.EOF || _input.LA(1) == QuestLexer.RBRACE}? | ';' | NEWLINE?;
+// service类型模块
+serviceModule: processModule | functionModule;
 
-blockStatement
-    :   localVariableDeclaration ';' # localVariableDeclarationStatement
-    |   THROW expression nextStatement # throwStatement
-    |   WHILE '(' newlines? expression newlines? ')' '{' newlines? blockStatements? newlines? '}' # whileStatement
-    |   FOR '(' newlines? forInit (forCondition=expression)? ';' newlines? (forUpdate=expression)? newlines? ')' '{' newlines? blockStatements? newlines? '}' # traditionalForStatement
-    |   FOR '(' newlines? declType? varId ':' expression newlines? ')' '{' newlines? blockStatements? newlines? '}' # forEachStatement
-    |   declType? FUNCTION varId '(' newlines? formalOrInferredParameterList? newlines? ')' LBRACE newlines? blockStatements? newlines? RBRACE # functionStatement
-    |   MACRO varId LBRACE newlines? blockStatements? newlines? RBRACE # macroStatement
-    |   (BREAK | CONTINUE) nextStatement # breakContinueStatement
-    |   RETURN expression? nextStatement # returnStatement
-    |   (';' | NEWLINE) # emptyStatement
-    |   expression nextStatement # expressionStatement
-    ;
+processModule: PROCESS LBRACE statement* RBRACE;
+functionModule: FUNCTION LBRACE functionDefinition* RBRACE;
 
-localVariableDeclaration
-    :   declType variableDeclaratorList
-    ;
+// prd类型模块
+prdModule: requirementModule | descriptionModule | businessModule;
 
-forInit
-    : localVariableDeclaration ';'
-    | expression ';'
-    | ';'
-    ;
+requirementModule: REQUIREMENT LBRACE textContent* RBRACE;
+descriptionModule: DESCRIPTION LBRACE textContent* RBRACE;
+businessModule: BUSINESS LBRACE textContent* RBRACE;
 
-variableDeclaratorList
-    : variableDeclarator (newlines? ',' newlines? variableDeclarator)*
-    | USE SERVICEID newlines? '.' newlines? SERVICEID ('(' (varId(',' varId)*)? ')')
-    ;
+// 文本内容规则（用于prd模块）
+textContent: IDENTIFIER | CHINESE_CHAR | STRING | INTEGER | FLOAT_LITERAL;
 
-variableDeclarator
-    :   variableDeclaratorId (EQ newlines? variableInitializer)?
-    ;
+// 类型系统规则
+type: primitiveType | classType;
 
-variableDeclaratorId
-    :   varId dims?
-    ;
+// 基本数据类型规则
+primitiveType: BYTE | SHORT | INT | LONG | FLOAT | DOUBLE | CHAR | BOOLEAN | STRING_TYPE;
 
-variableInitializer
-    :   expression
-    |   arrayInitializer
-    ;
+// 类类型规则（支持泛型）
+classType: IDENTIFIER (typeArguments)? (DOT IDENTIFIER (typeArguments)?)*;
 
-arrayInitializer
-    :   LBRACE newlines? variableInitializerList? newlines? RBRACE
-    ;
+// 类型参数规则
+typeArguments: LT typeArgument (COMMA typeArgument)* GT;
 
-variableInitializerList
-    :   variableInitializer (newlines? ',' newlines? variableInitializer)* ','?
-    ;
+// 类型参数规则（支持extends和super）
+typeArgument: type
+            | QUESTION (EXTENDS type)?
+            | QUESTION SUPER type;
 
-// decl type
-declType
-    :   primitiveType dims?
-    |   clsType dims?
-    ;
+// 变量声明规则（用于for循环，不包含分号）
+forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
 
-declTypeNoArr
-    : primitiveType
-    | clsType
-    ;
+// 变量声明规则（普通变量声明，包含分号）
+variableDeclaration: type IDENTIFIER (ASSIGN expression)? SEMI;
 
-primitiveType
-    :   BYTE
-    |   SHORT
-    |   INT
-    |   LONG
-    |   FLOAT
-    |   DOUBLE
-    |   BOOL
-    |   CHAR
-    ;
+// 方法定义规则
+functionDefinition: type IDENTIFIER LPAREN parameterList? RPAREN LBRACE statement* RBRACE;
 
-referenceType
-    :   clsType dims?
-    |   primitiveType dims
-    ;
+// 参数列表规则
+parameterList: parameter (COMMA parameter)*;
 
-dims
-    :   LBRACK RBRACK (LBRACK RBRACK)*
-    ;
+// 参数规则
+parameter: type IDENTIFIER;
 
-clsTypeNoTypeArguments
-    :   varId ('.' varId)*
-    ;
+// 语句通用规则
+statement: variableDeclaration
+//         | useAssignmentStatement
+         | assignmentStatement
+         | ifStatement
+         | forStatement
+         | whileStatement
+         | useStatement
+         | expressionStatement
+         | returnStatement;
 
-clsType
-    :   varId ('.' varId)* typeArguments?
-    ;
+// use赋值语句规则（支持 User user = use ... 格式）
+useAssignmentStatement: type IDENTIFIER ASSIGN USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
 
-typeArguments
-    :   LT newlines? typeArgumentList? newlines? (GT | RIGHSHIFT | URSHIFT)?
-    |   NOEQ
-    ;
+// 赋值语句规则
+assignmentStatement: expression SEMI;
 
-typeArgumentList
-    :   typeArgument (newlines? ',' newlines? typeArgument)*
-    ;
+// 赋值运算符规则
+assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN;
 
-typeArgument
-    :   referenceType
-    |   wildcard
-    ;
+// 表达式语句规则
+expressionStatement: expression SEMI;
 
-wildcard
-    :   '?' wildcardBounds?
-    ;
+// 返回语句规则
+returnStatement: RETURN expression? SEMI;
 
-wildcardBounds
-    :   EXTENDS referenceType
-    |   SUPER referenceType
-    ;
+// 控制流语句规则
 
-// expression
-expression
-    :   leftHandSide assignOperator newlines? expression
-    ;
+// if语句规则
+ifStatement: IF LPAREN expression RPAREN block (ELSE block)?;
 
-leftHandSide
-    :   varId (LPAREN newlines? argumentList? newlines? RPAREN)? (newlines? pathPart)*
-    ;
+// 代码块规则
+block: LBRACE statement* RBRACE;
 
-primaryNoFixPathable
-    :   literal # constExpr
-    |   '(' newlines? expression newlines? ')' # groupExpr
-    |   NEW varId ('.' varId)* typeArguments? '(' newlines? argumentList? newlines? ')' # newObjExpr
-    |   NEW declTypeNoArr dimExprs # newEmptyArrExpr
-    |   NEW declTypeNoArr dims arrayInitializer # newInitArrExpr
-    |   varId (LPAREN newlines? argumentList? newlines? RPAREN)? # varIdExpr
-    |   primitiveType # typeExpr
-    |   '[' newlines? listItems? newlines? ']' # listExpr
-    |   LBRACE newlines? mapEntries newlines? RBRACE # mapExpr
-    |   LBRACE newlines? blockStatements? newlines? RBRACE # blockExpr
-    ;
+// for循环规则
+forStatement: FOR LPAREN forControl RPAREN block;
 
-primaryNoFixNonPathable
-    :   qlIf # ifExpr
-    |   TRY LBRACE newlines? blockStatements? newlines? RBRACE tryCatches? (newlines? tryFinally)? # tryCatchExpr
-    |   lambdaParameters ARROW newlines? ( LBRACE newlines? blockStatements? newlines? RBRACE | expression) # lambdaExpr
-    ;
+// for控制规则
+forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
 
-qlIf : IF '(' newlines? condition=expression newlines? ')' newlines? THEN? newlines? thenBody (newlines? ELSE newlines? elseBody)?;
+// while循环规则
+whileStatement: WHILE LPAREN expression RPAREN block;
 
-thenBody
-    : LBRACE newlines? blockStatements? newlines? RBRACE
-    | nonExpressionStatement
-    | expression
-    ;
+// Spring Bean调用规则
 
-elseBody
-    : LBRACE newlines? blockStatements? newlines? RBRACE
-    | qlIf
-    | nonExpressionStatement
-    | expression
-    ;
+// use语句规则
+useStatement: (type IDENTIFIER ASSIGN)? USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
 
-// Non-expression statements that can appear in if-then-else bodies
-// This excludes 'expression nextStatement' to avoid ambiguity
-nonExpressionStatement
-    : localVariableDeclaration ';'
-    | THROW expression nextStatement
-    | WHILE '(' newlines? expression newlines? ')' '{' newlines? blockStatements? newlines? '}'
-    | FOR '(' newlines? forInit (forCondition=expression)? ';' newlines? (forUpdate=expression)? newlines? ')' '{' newlines? blockStatements? newlines? '}'
-    | FOR '(' newlines? declType? varId ':' expression newlines? ')' '{' newlines? blockStatements? newlines? '}'
-    | FUNCTION varId '(' newlines? formalOrInferredParameterList? newlines? ')' LBRACE newlines? blockStatements? newlines? RBRACE
-    | MACRO varId LBRACE newlines? blockStatements? newlines? RBRACE
-    | (BREAK | CONTINUE) nextStatement
-    | RETURN expression? nextStatement
-    | (';' | NEWLINE)
-    ;
+// 参数列表规则（用于方法调用）
+argumentList: expression (COMMA expression)*;
 
-listItems
-    : expression (newlines? ',' newlines? expression)* ','?
-    ;
+// 表达式规则
 
-dimExprs
-    :   ('[' newlines? expression newlines? ']')+
-    ;
+// 表达式层级规则
+expression: primary
+          | expression DOT IDENTIFIER
+          | expression LPAREN argumentList? RPAREN
+          | expression LBRACK expression RBRACK
+          | expression postfix=(INC | DEC)
+          | prefix=(PLUS | MINUS | INC | DEC | NOT) expression
+          | expression binaryOp expression
+          | expression QUESTION expression COLON expression
+          | LPAREN type RPAREN expression
+          | IDENTIFIER assignmentOperator expression;
 
-tryCatches
-    : tryCatch (newlines? tryCatch)*
-    ;
+// 基本表达式规则
+primary: literal
+       | IDENTIFIER
+       | SUPER (DOT IDENTIFIER)?
+       | LPAREN expression RPAREN;
 
-tryCatch
-    : CATCH '(' catchParams ')' LBRACE newlines? blockStatements? newlines? RBRACE
-    ;
+// 字面量规则
+literal: INTEGER
+       | FLOAT_LITERAL
+       | STRING
+       | TRUE
+       | FALSE
+       | NULL;
 
-catchParams
-    : (declType (BIT_OR declType)*)? varId
-    ;
-
-tryFinally
-    : FINALLY LBRACE newlines? blockStatements? newlines? RBRACE
-    ;
-
-mapEntries
-    : ':'
-    | mapEntry (',' newlines? mapEntry)* ','?
-    ;
-
-mapEntry
-    : mapKey newlines? ':' newlines? mapValue
-    ;
-
-mapValue
-    : {_input.LT(-2).getText().equals("'@class'")}? QuoteStringLiteral # clsValue
-    | expression # eValue
-    ;
-
-mapKey
-    : idMapKey # idKey
-    | QuoteStringLiteral # quoteStringKey
-    ;
-
-idMapKey
-    :   varId
-    |   FOR
-    |   IF
-    |   ELSE
-    |   WHILE
-    |   BREAK
-    |   CONTINUE
-    |   RETURN
-    |   FUNCTION
-    |   MACRO
-    |   IMPORT
-    |   STATIC
-    |   NEW
-    |   BYTE
-    |   SHORT
-    |   INT
-    |   LONG
-    |   FLOAT
-    |   DOUBLE
-    |   CHAR
-    |   BOOL
-    |   NULL
-    |   TRUE
-    |   FALSE
-    |   EXTENDS
-    |   SUPER
-    |   TRY
-    |   CATCH
-    |   FINALLY
-    |   THROW
-    |   CLASS
-    |   THIS
-    ;
-
-pathPart
-    :   '.' varId '(' newlines? argumentList? newlines? ')' # methodInvoke
-    |   OPTIONAL_CHAINING varId '(' newlines? argumentList? newlines? ')' # optionalMethodInvoke
-    |   SPREAD_CHAINING varId '(' newlines? argumentList? newlines? ')' # spreadMethodInvoke
-    |   '.' fieldId # fieldAccess
-    |   OPTIONAL_CHAINING fieldId # optionalFieldAccess
-    |   SPREAD_CHAINING fieldId # spreadFieldAccess
-    |   DCOLON varId # methodAccess
-    |   '[' newlines? indexValueExpr? newlines? ']' # indexExpr
-    ;
-
-fieldId
-    :   varId
-    |   CLASS
-    |   QuoteStringLiteral
-    ;
-
-indexValueExpr
-    :   expression # singleIndex
-    |   start=expression? newlines? ':' newlines? end=expression? # sliceIndex
-    ;
-
-argumentList
-    :   expression (newlines? ',' newlines? expression)*
-    ;
-
-literal
-    :   IntegerLiteral
-    |   FloatingPointLiteral
-    |   IntegerOrFloatingLiteral
-    |   boolenLiteral
-    |   QuoteStringLiteral
-    |   NULL
-    ;
-
-boolenLiteral
-    :   TRUE
-    |   FALSE
-    ;
-
-lambdaParameters
-    :   varId
-    |   '(' formalOrInferredParameterList? ')'
-    ;
-
-formalOrInferredParameterList
-    :   formalOrInferredParameter (newlines? ',' newlines? formalOrInferredParameter)*
-    ;
-
-formalOrInferredParameter
-    :   declType? varId
-    ;
-
-// id
-
-assignOperator
-    :   EQ
-    |   RIGHSHIFT_ASSGIN
-    |   URSHIFT_ASSGIN
-    |   LSHIFT_ASSGIN
-    |   ADD_ASSIGN
-    |   SUB_ASSIGN
-    |   AND_ASSIGN
-    |   OR_ASSIGN
-    |   MUL_ASSIGN
-    |   MOD_ASSIGN
-    |   DIV_ASSIGN
-    |   XOR_ASSIGN
-    ;
-
-opId
-    :   BANG
-    |   TILDE
-    |   ADD
-    |   SUB
-    |   INC
-    |   DEC
-    |   DOTMUL
-    |   assignOperator
-    |   OPID
-    ;
-
-varId
-    : ID
-    | FUNCTION
-    ;
+// 二元运算符规则
+binaryOp: MULT | DIV | MOD
+        | PLUS | MINUS
+        | LT | GT | LE | GE | EQ | NEQ
+        | AND | OR;

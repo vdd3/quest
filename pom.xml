@@ -12,7 +12,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <antlr.version>4.13.1</antlr.version>
+        <antlr.version>4.9.3</antlr.version>
     </properties>
 
     <dependencies>
@@ -61,19 +61,37 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr.version}</version>
+                <configuration>
+                    <listener>true</listener>
+                    <visitor>true</visitor>
+                    <outputDirectory>${project.build.directory}/generated-sources/antlr4/cn/easygd/quest/core</outputDirectory>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>antlr</id>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/antlr4</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
-                            <arguments>
-                                <argument>-package</argument>
-                                <argument>com.quest</argument>
-                            </arguments>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.antlr.v4.runtime</pattern>
+                                    <shadedPattern>cn.easygd.quest.runtime</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
