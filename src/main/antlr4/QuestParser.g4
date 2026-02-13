@@ -17,19 +17,22 @@ kindDeclaration: AT KIND kindType;
 // kind类型规则
 kindType: SERVICE | PRD;
 
+// 业务模块规则
+bizModule: AT BUSINESS IDENTIFIER;
+
 // 模块通用规则
-module: serviceModule | prdModule;
+module: (bizModule newlines? serviceModule) | prdModule;
 
 // service类型模块
-serviceModule: processModule | functionModule;
+serviceModule: processModule+ | functionModule+;
 
-processModule: PROCESS LBRACE statement* RBRACE;
-functionModule: FUNCTION LBRACE functionDefinition* RBRACE;
+processModule: IDENTIFIER PROCESS LBRACE newlines? statement* newlines? RBRACE;
+functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
 
 // prd类型模块
 prdModule: requirementModule | descriptionModule | businessModule;
 
-requirementModule: REQUIREMENT LBRACE textContent* RBRACE;
+requirementModule: REQUIREMENT LBRACE newlines? textContent* newlines? RBRACE;
 descriptionModule: DESCRIPTION LBRACE textContent* RBRACE;
 businessModule: BUSINESS LBRACE textContent* RBRACE;
 
@@ -57,7 +60,7 @@ typeArgument: type
 forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
 
 // 变量声明规则（普通变量声明，包含分号）
-variableDeclaration: type IDENTIFIER (ASSIGN expression)? SEMI;
+//variableDeclaration: type IDENTIFIER (ASSIGN expression)? SEMI;
 
 // 方法定义规则
 functionDefinition: type IDENTIFIER LPAREN parameterList? RPAREN LBRACE statement* RBRACE;
@@ -69,52 +72,51 @@ parameterList: parameter (COMMA parameter)*;
 parameter: type IDENTIFIER;
 
 // 语句通用规则
-statement: variableDeclaration
-//         | useAssignmentStatement
-         | assignmentStatement
-         | ifStatement
-         | forStatement
-         | whileStatement
-         | useStatement
-         | expressionStatement
-         | returnStatement;
-
-// use赋值语句规则（支持 User user = use ... 格式）
-useAssignmentStatement: type IDENTIFIER ASSIGN USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
+statement: type IDENTIFIER (ASSIGN expression)? SEMI #variableStatement
+         | expression SEMI #assignmentStatement
+         | IF LPAREN expression RPAREN block (ELSE block)? #ifStatement
+         | FOR LPAREN forControl RPAREN block #forStatement
+         | WHILE LPAREN expression RPAREN block #whileStatement
+         | (type IDENTIFIER ASSIGN)? USE serviceExpression SEMI #useStatement
+         | expression SEMI #expressionStatement
+         | RETURN expression? SEMI #returnStatement;
 
 // 赋值语句规则
-assignmentStatement: expression SEMI;
+//assignmentStatement: expression SEMI;
 
 // 赋值运算符规则
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN;
 
+// 服务表达式规则
+serviceExpression: IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN;
+
 // 表达式语句规则
-expressionStatement: expression SEMI;
+//expressionStatement: expression SEMI;
 
 // 返回语句规则
-returnStatement: RETURN expression? SEMI;
+//returnStatement: RETURN expression? SEMI;
 
 // 控制流语句规则
 
 // if语句规则
-ifStatement: IF LPAREN expression RPAREN block (ELSE block)?;
+//ifStatement: IF LPAREN expression RPAREN block (ELSE block)?;
 
 // 代码块规则
 block: LBRACE statement* RBRACE;
 
 // for循环规则
-forStatement: FOR LPAREN forControl RPAREN block;
+//forStatement: FOR LPAREN forControl RPAREN block;
 
 // for控制规则
 forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
 
 // while循环规则
-whileStatement: WHILE LPAREN expression RPAREN block;
+//whileStatement: WHILE LPAREN expression RPAREN block;
 
 // Spring Bean调用规则
 
 // use语句规则
-useStatement: (type IDENTIFIER ASSIGN)? USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
+//useStatement: (type IDENTIFIER ASSIGN)? USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
 
 // 参数列表规则（用于方法调用）
 argumentList: expression (COMMA expression)*;
@@ -152,3 +154,5 @@ binaryOp: MULT | DIV | MOD
         | PLUS | MINUS
         | LT | GT | LE | GE | EQ | NEQ
         | AND | OR;
+
+newlines: NEWLINE+;

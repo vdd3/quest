@@ -1,6 +1,8 @@
 package cn.easygd.quest.runtime;
 
-import cn.easygd.quest.core.*;
+import cn.easygd.quest.core.QuestKindVisitor;
+import cn.easygd.quest.core.QuestLexer;
+import cn.easygd.quest.core.QuestParser;
 import cn.easygd.quest.core.enums.KindType;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -45,65 +47,65 @@ public class QuestParserExample {
             System.out.println("检测到kind类型: " + kind);
 
             // 获取对应的listener
-            QuestParserListener baseListener = QuestListenerManager.getListener(kind);
+//            QuestParserListener baseListener = QuestVisitorManager.getListener(kind);
             
             // 如果是Service类型的listener，进行类型转换
-            QuestServiceListener serviceListener = null;
-            if (baseListener instanceof QuestServiceListener) {
-                serviceListener = (QuestServiceListener) baseListener;
-                System.out.println("成功获取QuestServiceListener实例");
-            } else {
-                System.out.println("警告: 获取的listener不是QuestServiceListener类型: " + 
-                                 (baseListener != null ? baseListener.getClass().getName() : "null"));
-                return;
-            }
-            
-            // 重要：重新创建完整的解析流程
-            QuestLexer lexer2 = new QuestLexer(CharStreams.fromString(script));
-            CommonTokenStream tokens2 = new CommonTokenStream(lexer2);
-            QuestParser parser2 = new QuestParser(tokens2);
-            
-            // 添加错误监听器以便调试
-            parser2.removeErrorListeners();
-            parser2.addErrorListener(new org.antlr.v4.runtime.BaseErrorListener() {
-                @Override
-                public void syntaxError(org.antlr.v4.runtime.Recognizer<?, ?> recognizer,
-                                      Object offendingSymbol,
-                                      int line,
-                                      int charPositionInLine,
-                                      String msg,
-                                      org.antlr.v4.runtime.RecognitionException e) {
-                    System.err.println("语法错误: " + msg + " (行:" + line + ", 列:" + charPositionInLine + ")");
-                }
-            });
-            
-            // 添加listener
-            parser2.addParseListener(serviceListener);
-            
-            // 重新解析以触发listener回调
-            System.out.println("开始第二次解析以触发listener回调...");
-            QuestParser.ScriptContext parsedScript = parser2.script();
-            
-            System.out.println("\n=== 解析结果 ===");
-            System.out.println("Process模块列表:");
-            for (String item : serviceListener.getProcessList()) {
-                System.out.println("  - " + item);
-            }
-            
-            System.out.println("\nUse语句列表:");
-            for (String useStmt : serviceListener.getUseStatements()) {
-                System.out.println("  - " + useStmt);
-            }
-            
-            System.out.println("\n当前是否在Process模块中: " + serviceListener.isInProcessModule());
-            
-            // 验证结果
-            if (serviceListener.getProcessList().isEmpty()) {
-                System.out.println("\n⚠️  警告: 没有检测到任何Process模块事件");
-            }
-            if (serviceListener.getUseStatements().isEmpty()) {
-                System.out.println("\n⚠️  警告: 没有检测到任何Use语句");
-            }
+//            QuestServiceVisitor serviceListener = null;
+//            if (baseListener instanceof QuestServiceVisitor) {
+//                serviceListener = (QuestServiceVisitor) baseListener;
+//                System.out.println("成功获取QuestServiceListener实例");
+//            } else {
+//                System.out.println("警告: 获取的listener不是QuestServiceListener类型: " +
+//                                 (baseListener != null ? baseListener.getClass().getName() : "null"));
+//                return;
+//            }
+//
+//            // 重要：重新创建完整的解析流程
+//            QuestLexer lexer2 = new QuestLexer(CharStreams.fromString(script));
+//            CommonTokenStream tokens2 = new CommonTokenStream(lexer2);
+//            QuestParser parser2 = new QuestParser(tokens2);
+//
+//            // 添加错误监听器以便调试
+//            parser2.removeErrorListeners();
+//            parser2.addErrorListener(new org.antlr.v4.runtime.BaseErrorListener() {
+//                @Override
+//                public void syntaxError(org.antlr.v4.runtime.Recognizer<?, ?> recognizer,
+//                                      Object offendingSymbol,
+//                                      int line,
+//                                      int charPositionInLine,
+//                                      String msg,
+//                                      org.antlr.v4.runtime.RecognitionException e) {
+//                    System.err.println("语法错误: " + msg + " (行:" + line + ", 列:" + charPositionInLine + ")");
+//                }
+//            });
+//
+//            // 添加listener
+//            parser2.addParseListener(serviceListener);
+//
+//            // 重新解析以触发listener回调
+//            System.out.println("开始第二次解析以触发listener回调...");
+//            QuestParser.ScriptContext parsedScript = parser2.script();
+//
+//            System.out.println("\n=== 解析结果 ===");
+//            System.out.println("Process模块列表:");
+//            for (String item : serviceListener.getProcessList()) {
+//                System.out.println("  - " + item);
+//            }
+//
+//            System.out.println("\nUse语句列表:");
+//            for (String useStmt : serviceListener.getUseStatements()) {
+//                System.out.println("  - " + useStmt);
+//            }
+//
+//            System.out.println("\n当前是否在Process模块中: " + serviceListener.isInProcessModule());
+//
+//            // 验证结果
+//            if (serviceListener.getProcessList().isEmpty()) {
+//                System.out.println("\n⚠️  警告: 没有检测到任何Process模块事件");
+//            }
+//            if (serviceListener.getUseStatements().isEmpty()) {
+//                System.out.println("\n⚠️  警告: 没有检测到任何Use语句");
+//            }
             
         } catch (Exception e) {
             System.err.println("解析错误: " + e.getMessage());

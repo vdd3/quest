@@ -12,6 +12,9 @@ LINE_COMMENT: '//' ~[\r\n]* -> skip;
 BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 DOC_COMMENT: '/**' .*? '*/' -> skip;
 
+// 换行符处理
+NEWLINE : '\r' '\n'? | '\n';
+
 // 关键字定义
 KIND: 'kind' | '类型';
 SERVICE: 'service' | '服务';

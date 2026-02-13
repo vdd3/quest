@@ -34,19 +34,6 @@ public class QuestKindVisitor extends QuestParserBaseVisitor<String> {
         return null;
     }
 
-    @Override
-    public String visitUseStatement(QuestParser.UseStatementContext ctx) {
-        String text = ctx.getText();
-        String text1 = ctx.getStart().getText();
-        ctx.children.forEach(child -> {
-            System.out.println(child.getText());
-        });
-
-//        ctx.accept(this);
-
-        return super.visitUseStatement(ctx);
-    }
-
     /**
      * 便捷方法：直接从脚本上下文提取kind
      */
