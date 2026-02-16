@@ -1,5 +1,7 @@
 package cn.easygd.quest.runtime.statement;
 
+import cn.easygd.quest.runtime.enums.StatementType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +9,6 @@ import java.util.List;
  * @author VD
  */
 public class ProcessCodeStatement extends CodeStatement {
-
-    public static final String TYPE = "processStatement";
 
     /**
      * process name
@@ -20,10 +20,6 @@ public class ProcessCodeStatement extends CodeStatement {
      */
     private List<CodeStatement> statementList = new ArrayList<>();
 
-    public ProcessCodeStatement() {
-        this.type = TYPE;
-    }
-
     /**
      * build content
      *
@@ -32,5 +28,23 @@ public class ProcessCodeStatement extends CodeStatement {
     @Override
     public String buildContent() {
         return "";
+    }
+
+    /**
+     * statement type
+     *
+     * @return statement type
+     */
+    @Override
+    public StatementType type() {
+        return StatementType.PROCESS;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

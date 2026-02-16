@@ -4,24 +4,26 @@ import cn.easygd.quest.runtime.enums.StatementType;
 
 /**
  * @author VD
- *
- * <p>
- * script statement to code statement , code statement must be in quest moudle
- * </p>
  */
-public abstract class CodeStatement {
+public class ArrayExprCodeStatement extends CollectCodeStatement{
 
     /**
      * build content
      *
      * @return content
      */
-    public abstract String buildContent();
+    @Override
+    public String buildContent() {
+        return "";
+    }
 
     /**
      * statement type
      *
      * @return statement type
      */
-    public abstract StatementType type();
+    @Override
+    public StatementType type() {
+        return StatementType.ARRAY_ACCESS_EXPR;
+    }
 }

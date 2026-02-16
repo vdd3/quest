@@ -57,7 +57,7 @@ typeArgument: type
             | QUESTION SUPER type;
 
 // 变量声明规则（用于for循环，不包含分号）
-forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
+forVariableDeclaration: type IDENTIFIER (ASSIGN exprStatement)?;
 
 // 变量声明规则（普通变量声明，包含分号）
 //variableDeclaration: type IDENTIFIER (ASSIGN expression)? SEMI;
@@ -72,23 +72,19 @@ parameterList: parameter (COMMA parameter)*;
 parameter: type IDENTIFIER;
 
 // 语句通用规则
-statement: type IDENTIFIER (ASSIGN expression)? SEMI #variableStatement
-         | expression SEMI #assignmentStatement
-         | IF LPAREN expression RPAREN block (ELSE block)? #ifStatement
+statement: type IDENTIFIER (ASSIGN (exprStatement))? SEMI #variableStatement
+         | IF LPAREN exprStatement RPAREN block (ELSE block)? #ifStatement
          | FOR LPAREN forControl RPAREN block #forStatement
-         | WHILE LPAREN expression RPAREN block #whileStatement
-         | (type IDENTIFIER ASSIGN)? USE serviceExpression SEMI #useStatement
-         | expression SEMI #expressionStatement
-         | RETURN expression? SEMI #returnStatement;
+         | WHILE LPAREN exprStatement RPAREN block #whileStatement
+//         | (type IDENTIFIER ASSIGN)? USE serviceExpression SEMI #useStatement
+         | exprStatement SEMI #expressionStatement
+         | RETURN exprStatement? SEMI #returnStatement;
 
 // 赋值语句规则
 //assignmentStatement: expression SEMI;
 
 // 赋值运算符规则
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN;
-
-// 服务表达式规则
-serviceExpression: IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN;
 
 // 表达式语句规则
 //expressionStatement: expression SEMI;
@@ -108,7 +104,7 @@ block: LBRACE statement* RBRACE;
 //forStatement: FOR LPAREN forControl RPAREN block;
 
 // for控制规则
-forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
+forControl: (forVariableDeclaration | exprStatement)? SEMI exprStatement? SEMI exprStatement?;
 
 // while循环规则
 //whileStatement: WHILE LPAREN expression RPAREN block;
@@ -119,27 +115,37 @@ forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI express
 //useStatement: (type IDENTIFIER ASSIGN)? USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
 
 // 参数列表规则（用于方法调用）
-argumentList: expression (COMMA expression)*;
+argumentList: exprStatement (COMMA exprStatement)*;
 
 // 表达式规则
+exprStatement: expression;
 
 // 表达式层级规则
-expression: primary
-          | expression DOT IDENTIFIER
-          | expression LPAREN argumentList? RPAREN
-          | expression LBRACK expression RBRACK
-          | expression postfix=(INC | DEC)
-          | prefix=(PLUS | MINUS | INC | DEC | NOT) expression
-          | expression binaryOp expression
-          | expression QUESTION expression COLON expression
-          | LPAREN type RPAREN expression
-          | IDENTIFIER assignmentOperator expression;
+expression: primary #primaryExpr
+          | methodInvokeExpression #methodInvokeExpr
+          | expression LBRACK expression RBRACK #arrayAccessExpr
+          | expression postfix=(INC | DEC) #postfixExpr
+          | prefix=(PLUS | MINUS | INC | DEC | NOT) expression #prefixExpr
+          | expression binaryOp expression #binaryExpr
+          | expression QUESTION expression COLON expression #ternaryExpr
+          | LPAREN type RPAREN expression #castExpr
+          | IDENTIFIER assignmentOperator expression #assignmentExpr
+          ;
+
+// service expression
+//serviceExpression: IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN;
+
+// method invoke expression
+methodInvokeExpression: IDENTIFIER LPAREN argumentList? RPAREN #currentMethodInvokeExpr
+    | IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN #classMethodInvokeExpr
+//    | USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN #serviceMethodInvokeExpr
+    ;
 
 // 基本表达式规则
 primary: literal
        | IDENTIFIER
        | SUPER (DOT IDENTIFIER)?
-       | LPAREN expression RPAREN;
+       | LPAREN exprStatement RPAREN;
 
 // 字面量规则
 literal: INTEGER

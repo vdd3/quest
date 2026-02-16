@@ -22,6 +22,7 @@ PRD: 'prd' | '产品';
 PROCESS: 'process' | '逻辑';
 FUNCTION: 'function' | '函数';
 USE: 'use' | '使用';
+ENTITY: 'entity' | '实体';
 
 // prd模块关键字
 REQUIREMENT: '需求' | 'requirement';
@@ -38,12 +39,12 @@ RETURN: 'return' | '返回';
 // Java基本数据类型
 BYTE: 'byte';
 SHORT: 'short';
-INT: 'int';
-LONG: 'long';
+INT: 'int' | 'Integer';
+LONG: 'long' | 'Long';
 FLOAT: 'float';
 DOUBLE: 'double';
 CHAR: 'char';
-BOOLEAN: 'boolean';
+BOOLEAN: 'boolean' | 'Boolean';
 STRING_TYPE: 'String';
 
 // Java继承和泛型关键字

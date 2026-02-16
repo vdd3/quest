@@ -33,4 +33,8 @@ public class ServiceModule implements QuestModule {
     public void setBizModule(String bizModule) {
         this.bizModule = bizModule;
     }
+
+    public String getBizModule() {
+        return bizModule;
+    }
 }

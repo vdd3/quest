@@ -1,16 +1,15 @@
 package cn.easygd.quest.core;
 
 import cn.easygd.quest.runtime.module.ServiceModule;
+import cn.easygd.quest.runtime.statement.CodeStatement;
 import cn.easygd.quest.runtime.statement.ProcessCodeStatement;
-import cn.easygd.quest.runtime.statement.UseCodeStatement;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.List;
 
 /**
  * @author VD
  */
-public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule>{
+public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
 
     /**
      * 模块
@@ -50,30 +49,12 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule>{
 
         ProcessCodeStatement processCodeStatement = new ProcessCodeStatement();
 
-        // build process statement
-        for (QuestParser.StatementContext statementContext : statement) {
-
-            if(statementContext instanceof QuestParser.UseStatementContext){
-
-            } else if (statementContext instanceof QuestParser.IfStatementContext) {
-
-            }
-        }
-
+        List<CodeStatement> codeStatements = parseCoreStatement(statement);
 
         String processName = ctx.IDENTIFIER().getText();
+        processCodeStatement.setName(processName);
         serviceModule.putProcessStatement(processName, processCodeStatement);
         return null;
-    }
-
-
-    private UseCodeStatement buildUseStatement(QuestParser.UseStatementContext ctx) {
-        UseCodeStatement useCodeStatement = new UseCodeStatement();
-
-
-        List<ParseTree> children = ctx.children;
-
-        return useCodeStatement;
     }
 
     /**

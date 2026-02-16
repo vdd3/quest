@@ -1,12 +1,11 @@
 package cn.easygd.quest.runtime.statement;
 
+import cn.easygd.quest.runtime.enums.StatementType;
+
 /**
  * @author VD
  */
 public class TokenCodeStatement extends CodeStatement {
-
-
-    public static final String TYPE = "token";
 
     /**
      * token
@@ -18,10 +17,6 @@ public class TokenCodeStatement extends CodeStatement {
      */
     private String value;
 
-    public TokenCodeStatement() {
-        this.type = TYPE;
-    }
-
     /**
      * build content
      *
@@ -30,6 +25,16 @@ public class TokenCodeStatement extends CodeStatement {
     @Override
     public String buildContent() {
         return "";
+    }
+
+    /**
+     * statement type
+     *
+     * @return statement type
+     */
+    @Override
+    public StatementType type() {
+        return StatementType.TOKEN;
     }
 
     public void setToken(String token) {
