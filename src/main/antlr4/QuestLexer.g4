@@ -46,6 +46,7 @@ DOUBLE: 'double';
 CHAR: 'char';
 BOOLEAN: 'boolean' | 'Boolean';
 STRING_TYPE: 'String';
+VOID: 'void' | 'Void';
 
 // Java继承和泛型关键字
 EXTENDS: 'extends' | '继承';
@@ -62,6 +63,7 @@ DEFAULT: 'default';
 FINAL: 'final';
 IMPLEMENTS: 'implements';
 OVERRIDE: 'override';
+NEW: 'new';
 
 // 特殊值字面量
 NULL: 'null' | '空';

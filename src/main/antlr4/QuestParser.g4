@@ -44,7 +44,7 @@ entityModule: (classDeclaration | interfaceDeclaration | enumDeclaration)*;
 
 classDeclaration: usageLevel ABSTRACT? CLASS IDENTIFIER (EXTENDS classType)? (IMPLEMENTS classType (COMMA classType)*)? LBRACE newlines? classBody* newlines? RBRACE;
 
-classBody: usageLevel STATIC? FINAL? type IDENTIFIER SEMI
+classBody: usageLevel STATIC? FINAL? type IDENTIFIER (ASSIGN expression)? SEMI
     | (AT OVERRIDE newlines)? usageLevel type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE
     ;
 
@@ -117,6 +117,7 @@ expression: primary #primaryExpr
           | expression QUESTION expression COLON expression #ternaryExpr
           | LPAREN type RPAREN expression #castExpr
           | IDENTIFIER assignmentOperator expression #assignmentExpr
+          | NEW classType LPAREN argumentList? RPAREN #newExpr
           ;
 
 // method invoke expression
