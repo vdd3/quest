@@ -50,6 +50,18 @@ STRING_TYPE: 'String';
 // Java继承和泛型关键字
 EXTENDS: 'extends' | '继承';
 SUPER: 'super' | '父类';
+CLASS: 'class' | '类';
+INTERFACE: 'interface' | '接口';
+ENUM: 'enum' | '枚举';
+PUBLIC: 'public';
+PROTECTED: 'protected';
+PRIVATE: 'private';
+STATIC: 'static';
+ABSTRACT: 'abstract';
+DEFAULT: 'default';
+FINAL: 'final';
+IMPLEMENTS: 'implements';
+OVERRIDE: 'override';
 
 // 特殊值字面量
 NULL: 'null' | '空';

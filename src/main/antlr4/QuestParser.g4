@@ -9,22 +9,22 @@ options {
 }
 
 // 脚本顶层规则
-script: kindDeclaration module* EOF;
+script: kindDeclaration module EOF;
 
 // kind声明规则
 kindDeclaration: AT KIND kindType SEMI;
 
 // kind类型规则
-kindType: SERVICE | PRD;
+kindType: SERVICE | PRD | ENTITY;
 
 // 业务模块规则
 bizModule: AT BUSINESS IDENTIFIER SEMI;
 
 // 模块通用规则
-module: (bizModule newlines? serviceModule) | prdModule;
+module: (bizModule newlines? serviceModule) | prdModule | entityModule;
 
 // service类型模块
-serviceModule: processModule+ | functionModule?;
+serviceModule: processModule+ functionModule?;
 
 processModule: PROCESS IDENTIFIER LBRACE newlines? statement* newlines? RBRACE;
 functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
@@ -38,6 +38,25 @@ businessModule: BUSINESS LBRACE newlines? textContent* newlines? RBRACE;
 
 // 文本内容规则（用于prd模块）
 textContent: IDENTIFIER | CHINESE_CHAR | STRING | INTEGER | FLOAT_LITERAL;
+
+// entity类型模块
+entityModule: (classDeclaration | interfaceDeclaration | enumDeclaration)*;
+
+classDeclaration: usageLevel ABSTRACT? CLASS IDENTIFIER (EXTENDS classType)? (IMPLEMENTS classType (COMMA classType)*)? LBRACE newlines? classBody* newlines? RBRACE;
+
+classBody: usageLevel STATIC? FINAL? type IDENTIFIER SEMI
+    | (AT OVERRIDE newlines)? usageLevel type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE
+    ;
+
+interfaceDeclaration: INTERFACE IDENTIFIER LBRACE newlines? interfaceBody* newlines? RBRACE;
+
+interfaceBody: type IDENTIFIER ((LPAREN parameterList RPAREN) | (LPAREN RPAREN))? SEMI
+    | DEFAULT type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE
+    ;
+
+enumDeclaration: ENUM IDENTIFIER LBRACE newlines? enumBody* newlines? RBRACE;
+
+enumBody: IDENTIFIER (ASSIGN INTEGER)? (COMMA IDENTIFIER (ASSIGN INTEGER)?)*;
 
 // 类型系统规则
 type: primitiveType | classType;
@@ -59,9 +78,6 @@ typeArgument: type
 // 变量声明规则（用于for循环，不包含分号）
 forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
 
-// 变量声明规则（普通变量声明，包含分号）
-//variableDeclaration: type IDENTIFIER (ASSIGN expression)? SEMI;
-
 // 方法定义规则
 functionDefinition: type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
 
@@ -79,45 +95,17 @@ statement: type IDENTIFIER (ASSIGN (expression))? SEMI #variableStatement
          | expression SEMI #expressionStatement
          | RETURN expression? SEMI #returnStatement;
 
-// 赋值语句规则
-//assignmentStatement: expression SEMI;
-
 // 赋值运算符规则
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN;
-
-// 表达式语句规则
-//expressionStatement: expression SEMI;
-
-// 返回语句规则
-//returnStatement: RETURN expression? SEMI;
-
-// 控制流语句规则
-
-// if语句规则
-//ifStatement: IF LPAREN expression RPAREN block (ELSE block)?;
 
 // 代码块规则
 block: LBRACE newlines? statement* newlines? RBRACE;
 
-// for循环规则
-//forStatement: FOR LPAREN forControl RPAREN block;
-
 // for控制规则
 forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
 
-// while循环规则
-//whileStatement: WHILE LPAREN expression RPAREN block;
-
-// Spring Bean调用规则
-
-// use语句规则
-//useStatement: (type IDENTIFIER ASSIGN)? USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
-
 // 参数列表规则（用于方法调用）
 argumentList: expression (COMMA expression)*;
-
-// 表达式规则
-//exprStatement: expression;
 
 // 表达式层级规则
 expression: primary #primaryExpr
@@ -131,13 +119,9 @@ expression: primary #primaryExpr
           | IDENTIFIER assignmentOperator expression #assignmentExpr
           ;
 
-// service expression
-//serviceExpression: IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN;
-
 // method invoke expression
 methodInvokeExpression: IDENTIFIER LPAREN argumentList? RPAREN #currentMethodInvokeExpr
     | IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN #classMethodInvokeExpr
-//    | USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN #serviceMethodInvokeExpr
     ;
 
 // 基本表达式规则
@@ -161,3 +145,5 @@ binaryOp: MULT | DIV | MOD
         | AND | OR;
 
 newlines: NEWLINE+;
+
+usageLevel: PRIVATE | PUBLIC | PROTECTED;
