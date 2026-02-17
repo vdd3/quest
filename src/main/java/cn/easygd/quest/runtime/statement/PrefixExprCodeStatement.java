@@ -5,7 +5,16 @@ import cn.easygd.quest.runtime.enums.StatementType;
 /**
  * @author VD
  */
-public class PostFixExprCodeStatement extends CollectCodeStatement {
+public class PrefixExprCodeStatement extends CollectCodeStatement{
+    /**
+     * build content
+     *
+     * @return content
+     */
+    @Override
+    public String buildContent() {
+        return "";
+    }
 
     /**
      * statement type
@@ -14,6 +23,6 @@ public class PostFixExprCodeStatement extends CollectCodeStatement {
      */
     @Override
     public StatementType type() {
-        return null;
+        return StatementType.PREFIX_EXPR;
     }
 }

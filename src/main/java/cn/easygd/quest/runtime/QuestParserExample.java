@@ -3,6 +3,7 @@ package cn.easygd.quest.runtime;
 import cn.easygd.quest.core.QuestKindVisitor;
 import cn.easygd.quest.core.QuestLexer;
 import cn.easygd.quest.core.QuestParser;
+import cn.easygd.quest.core.QuestServiceVisitor;
 import cn.easygd.quest.core.enums.KindType;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -15,7 +16,12 @@ public class QuestParserExample {
 
     public static void main(String[] args) {
         // 示例脚本内容
-        String script1 = "@kind service process {String id = \"1\"; User user = use 用户服务.获取用户(id);}";
+        String script1 = "@kind service;\n" +
+                "@business 你好;\n" +
+                "process biz {\n" +
+                "String id = \"1\";\n" +
+                "User user = 用户服务.获取用户(id);\n" +
+                "}";
 
 //        String script2 = "@类型 产品\n需求 {\n    // 需求描述\n}";
 
@@ -45,6 +51,11 @@ public class QuestParserExample {
             KindType kind = extractor.extractKind(scriptCtx);
             scriptCtx.accept(extractor);
             System.out.println("检测到kind类型: " + kind);
+
+            QuestServiceVisitor questServiceVisitor = new QuestServiceVisitor();
+            questServiceVisitor.visit(scriptCtx);
+
+            System.out.println("-------");
 
             // 获取对应的listener
 //            QuestParserListener baseListener = QuestVisitorManager.getListener(kind);

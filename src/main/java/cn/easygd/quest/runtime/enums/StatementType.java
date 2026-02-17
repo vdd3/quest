@@ -13,11 +13,23 @@ public enum StatementType {
 
     /*=====================stack module======================*/
 
+    VARIABLE,
+
+    IF,
+
+    FOR,
+
+    WHILE,
+
+    EXPRESSION,
+
     TOKEN,
 
     TYPE,
 
     RETURN,
+
+    BLOCK,
 
     /*=====================expression======================*/
 

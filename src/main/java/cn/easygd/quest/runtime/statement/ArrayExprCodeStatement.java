@@ -8,16 +8,6 @@ import cn.easygd.quest.runtime.enums.StatementType;
 public class ArrayExprCodeStatement extends CollectCodeStatement{
 
     /**
-     * build content
-     *
-     * @return content
-     */
-    @Override
-    public String buildContent() {
-        return "";
-    }
-
-    /**
      * statement type
      *
      * @return statement type

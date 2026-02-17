@@ -12,29 +12,29 @@ options {
 script: kindDeclaration module* EOF;
 
 // kind声明规则
-kindDeclaration: AT KIND kindType;
+kindDeclaration: AT KIND kindType SEMI;
 
 // kind类型规则
 kindType: SERVICE | PRD;
 
 // 业务模块规则
-bizModule: AT BUSINESS IDENTIFIER;
+bizModule: AT BUSINESS IDENTIFIER SEMI;
 
 // 模块通用规则
 module: (bizModule newlines? serviceModule) | prdModule;
 
 // service类型模块
-serviceModule: processModule+ | functionModule+;
+serviceModule: processModule+ | functionModule;
 
-processModule: IDENTIFIER PROCESS LBRACE newlines? statement* newlines? RBRACE;
+processModule: PROCESS IDENTIFIER LBRACE newlines? statement* newlines? RBRACE;
 functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
 
 // prd类型模块
-prdModule: requirementModule | descriptionModule | businessModule;
+prdModule: requirementModule newlines? descriptionModule newlines? businessModule;
 
 requirementModule: REQUIREMENT LBRACE newlines? textContent* newlines? RBRACE;
-descriptionModule: DESCRIPTION LBRACE textContent* RBRACE;
-businessModule: BUSINESS LBRACE textContent* RBRACE;
+descriptionModule: DESCRIPTION LBRACE newlines? textContent* newlines? RBRACE;
+businessModule: BUSINESS LBRACE newlines? textContent* newlines? RBRACE;
 
 // 文本内容规则（用于prd模块）
 textContent: IDENTIFIER | CHINESE_CHAR | STRING | INTEGER | FLOAT_LITERAL;
@@ -57,13 +57,13 @@ typeArgument: type
             | QUESTION SUPER type;
 
 // 变量声明规则（用于for循环，不包含分号）
-forVariableDeclaration: type IDENTIFIER (ASSIGN exprStatement)?;
+forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
 
 // 变量声明规则（普通变量声明，包含分号）
 //variableDeclaration: type IDENTIFIER (ASSIGN expression)? SEMI;
 
 // 方法定义规则
-functionDefinition: type IDENTIFIER LPAREN parameterList? RPAREN LBRACE statement* RBRACE;
+functionDefinition: type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
 
 // 参数列表规则
 parameterList: parameter (COMMA parameter)*;
@@ -72,13 +72,12 @@ parameterList: parameter (COMMA parameter)*;
 parameter: type IDENTIFIER;
 
 // 语句通用规则
-statement: type IDENTIFIER (ASSIGN (exprStatement))? SEMI #variableStatement
-         | IF LPAREN exprStatement RPAREN block (ELSE block)? #ifStatement
+statement: type IDENTIFIER (ASSIGN (expression))? SEMI #variableStatement
+         | IF LPAREN expression RPAREN block (ELSE block)? #ifStatement
          | FOR LPAREN forControl RPAREN block #forStatement
-         | WHILE LPAREN exprStatement RPAREN block #whileStatement
-//         | (type IDENTIFIER ASSIGN)? USE serviceExpression SEMI #useStatement
-         | exprStatement SEMI #expressionStatement
-         | RETURN exprStatement? SEMI #returnStatement;
+         | WHILE LPAREN expression RPAREN block #whileStatement
+         | expression SEMI #expressionStatement
+         | RETURN expression? SEMI #returnStatement;
 
 // 赋值语句规则
 //assignmentStatement: expression SEMI;
@@ -98,13 +97,13 @@ assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSI
 //ifStatement: IF LPAREN expression RPAREN block (ELSE block)?;
 
 // 代码块规则
-block: LBRACE statement* RBRACE;
+block: LBRACE newlines? statement* newlines? RBRACE;
 
 // for循环规则
 //forStatement: FOR LPAREN forControl RPAREN block;
 
 // for控制规则
-forControl: (forVariableDeclaration | exprStatement)? SEMI exprStatement? SEMI exprStatement?;
+forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
 
 // while循环规则
 //whileStatement: WHILE LPAREN expression RPAREN block;
@@ -115,10 +114,10 @@ forControl: (forVariableDeclaration | exprStatement)? SEMI exprStatement? SEMI e
 //useStatement: (type IDENTIFIER ASSIGN)? USE IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN SEMI;
 
 // 参数列表规则（用于方法调用）
-argumentList: exprStatement (COMMA exprStatement)*;
+argumentList: expression (COMMA expression)*;
 
 // 表达式规则
-exprStatement: expression;
+//exprStatement: expression;
 
 // 表达式层级规则
 expression: primary #primaryExpr
@@ -145,7 +144,7 @@ methodInvokeExpression: IDENTIFIER LPAREN argumentList? RPAREN #currentMethodInv
 primary: literal
        | IDENTIFIER
        | SUPER (DOT IDENTIFIER)?
-       | LPAREN exprStatement RPAREN;
+       | LPAREN expression RPAREN;
 
 // 字面量规则
 literal: INTEGER

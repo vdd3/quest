@@ -29,6 +29,24 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      * @param ctx
      */
     @Override
+    public Void visitBlock(QuestParser.BlockContext ctx) {
+        BlockCodeStatement blockCodeStatement = new BlockCodeStatement();
+
+        List<QuestParser.StatementContext> statement = ctx.statement();
+        blockCodeStatement.addAll(parseCoreStatement(statement));
+        stackModule.setCodeStatement(blockCodeStatement);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
     public Void visitType(QuestParser.TypeContext ctx) {
         TypeCodeStatement typeCodeStatement = new TypeCodeStatement();
         typeCodeStatement.add(ctx.getText());
@@ -46,7 +64,14 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitAssignmentExpr(QuestParser.AssignmentExprContext ctx) {
-        return super.visitAssignmentExpr(ctx);
+        List<CodeStatement> statementList = ctx.children.stream()
+                .map(this::convertTree)
+                .collect(Collectors.toList());
+
+        AssignmentExprCodeStatement statement = new AssignmentExprCodeStatement();
+        statement.addAll(statementList);
+        stackModule.setCodeStatement(statement);
+        return null;
     }
 
     /**
@@ -59,7 +84,13 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitPrefixExpr(QuestParser.PrefixExprContext ctx) {
-        return super.visitPrefixExpr(ctx);
+        List<CodeStatement> statementList = ctx.children.stream()
+                .map(this::convertTree)
+                .collect(Collectors.toList());
+        PrefixExprCodeStatement statement = new PrefixExprCodeStatement();
+        statement.addAll(statementList);
+        stackModule.setCodeStatement(statement);
+        return null;
     }
 
     /**
@@ -108,7 +139,13 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitTernaryExpr(QuestParser.TernaryExprContext ctx) {
-        return super.visitTernaryExpr(ctx);
+        List<CodeStatement> statementList = ctx.children.stream()
+                .map(this::convertTree)
+                .collect(Collectors.toList());
+        TernaryExprCodeStatement ternaryExprCodeStatement = new TernaryExprCodeStatement();
+        ternaryExprCodeStatement.addAll(statementList);
+        stackModule.setCodeStatement(ternaryExprCodeStatement);
+        return null;
     }
 
     /**
@@ -121,7 +158,14 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitCastExpr(QuestParser.CastExprContext ctx) {
-        return super.visitCastExpr(ctx);
+        List<CodeStatement> statementList = ctx.children.stream()
+                .map(this::convertTree)
+                .collect(Collectors.toList());
+
+        CastExprCodeStatement castExprCodeStatement = new CastExprCodeStatement();
+        castExprCodeStatement.addAll(statementList);
+        stackModule.setCodeStatement(castExprCodeStatement);
+        return null;
     }
 
     /**
@@ -134,7 +178,14 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitBinaryExpr(QuestParser.BinaryExprContext ctx) {
-        return super.visitBinaryExpr(ctx);
+        List<CodeStatement> statementList = ctx.children.stream()
+                .map(this::convertTree)
+                .collect(Collectors.toList());
+
+        BinaryExprCodeStatement binaryExprCodeStatement = new BinaryExprCodeStatement();
+        binaryExprCodeStatement.addAll(statementList);
+        stackModule.setCodeStatement(binaryExprCodeStatement);
+        return null;
     }
 
     /**
@@ -201,6 +252,42 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
         statement.setMethodName(methodName);
         statement.setArguments(arguments);
         stackModule.setCodeStatement(statement);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Void visitBinaryOp(QuestParser.BinaryOpContext ctx) {
+        TokenCodeStatement codeStatement = (TokenCodeStatement) ctx.children.stream().findFirst()
+                .map(this::convertTree)
+                .orElse(null);
+
+        stackModule.setCodeStatement(codeStatement);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Void visitAssignmentOperator(QuestParser.AssignmentOperatorContext ctx) {
+        TokenCodeStatement codeStatement = (TokenCodeStatement) ctx.children.stream().findFirst()
+                .map(this::convertTree)
+                .orElse(null);
+
+        stackModule.setCodeStatement(codeStatement);
         return null;
     }
 

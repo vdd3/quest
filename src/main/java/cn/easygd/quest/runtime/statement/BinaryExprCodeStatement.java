@@ -5,7 +5,7 @@ import cn.easygd.quest.runtime.enums.StatementType;
 /**
  * @author VD
  */
-public class PostFixExprCodeStatement extends CollectCodeStatement {
+public class BinaryExprCodeStatement extends CollectCodeStatement {
 
     /**
      * statement type
@@ -14,6 +14,6 @@ public class PostFixExprCodeStatement extends CollectCodeStatement {
      */
     @Override
     public StatementType type() {
-        return null;
+        return StatementType.BINARY_EXPR;
     }
 }

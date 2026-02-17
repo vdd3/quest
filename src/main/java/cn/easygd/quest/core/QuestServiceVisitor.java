@@ -53,8 +53,25 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
 
         String processName = ctx.IDENTIFIER().getText();
         processCodeStatement.setName(processName);
+        processCodeStatement.addAll(codeStatements);
         serviceModule.putProcessStatement(processName, processCodeStatement);
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Void visitFunctionModule(QuestParser.FunctionModuleContext ctx) {
+        ctx.functionDefinition();
+
+
+        return super.visitFunctionModule(ctx);
     }
 
     /**

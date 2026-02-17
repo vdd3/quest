@@ -5,7 +5,7 @@ import cn.easygd.quest.runtime.enums.StatementType;
 /**
  * @author VD
  */
-public class PostFixExprCodeStatement extends CollectCodeStatement {
+public class TernaryExprCodeStatement extends CollectCodeStatement{
 
     /**
      * statement type

@@ -2,33 +2,15 @@ package cn.easygd.quest.runtime.statement;
 
 import cn.easygd.quest.runtime.enums.StatementType;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author VD
  */
-public class ProcessCodeStatement extends CodeStatement {
+public class ProcessCodeStatement extends CollectCodeStatement {
 
     /**
      * process name
      */
     private String name;
-
-    /**
-     * statement list
-     */
-    private List<CodeStatement> statementList = new ArrayList<>();
-
-    /**
-     * build content
-     *
-     * @return content
-     */
-    @Override
-    public String buildContent() {
-        return "";
-    }
 
     /**
      * statement type
