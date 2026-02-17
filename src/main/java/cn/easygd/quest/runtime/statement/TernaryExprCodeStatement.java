@@ -14,6 +14,6 @@ public class TernaryExprCodeStatement extends CollectCodeStatement{
      */
     @Override
     public StatementType type() {
-        return null;
+        return StatementType.TERNARY_EXPR;
     }
 }

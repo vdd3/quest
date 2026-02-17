@@ -24,7 +24,7 @@ bizModule: AT BUSINESS IDENTIFIER SEMI;
 module: (bizModule newlines? serviceModule) | prdModule;
 
 // service类型模块
-serviceModule: processModule+ | functionModule;
+serviceModule: processModule+ | functionModule?;
 
 processModule: PROCESS IDENTIFIER LBRACE newlines? statement* newlines? RBRACE;
 functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;

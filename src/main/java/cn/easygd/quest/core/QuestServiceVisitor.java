@@ -2,6 +2,7 @@ package cn.easygd.quest.core;
 
 import cn.easygd.quest.runtime.module.ServiceModule;
 import cn.easygd.quest.runtime.statement.CodeStatement;
+import cn.easygd.quest.runtime.statement.FunctionCodeStatement;
 import cn.easygd.quest.runtime.statement.ProcessCodeStatement;
 
 import java.util.List;
@@ -68,10 +69,16 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
      */
     @Override
     public Void visitFunctionModule(QuestParser.FunctionModuleContext ctx) {
-        ctx.functionDefinition();
+        List<QuestParser.FunctionDefinitionContext> contextList = ctx.functionDefinition();
+        for (QuestParser.FunctionDefinitionContext context : contextList) {
+            String functionName = context.IDENTIFIER().getText();
+            FunctionCodeStatement functionCodeStatement = new FunctionCodeStatement();
+            List<CodeStatement> statementList = parseCoreStatement(context.statement());
+            functionCodeStatement.addAll(statementList);
 
-
-        return super.visitFunctionModule(ctx);
+            serviceModule.putFunctionStatement(functionName,functionCodeStatement);
+        }
+        return null;
     }
 
     /**

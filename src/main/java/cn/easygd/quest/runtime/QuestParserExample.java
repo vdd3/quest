@@ -1,6 +1,6 @@
 package cn.easygd.quest.runtime;
 
-import cn.easygd.quest.core.QuestKindVisitor;
+import cn.easygd.quest.core.QuestHeaderVisitor;
 import cn.easygd.quest.core.QuestLexer;
 import cn.easygd.quest.core.QuestParser;
 import cn.easygd.quest.core.QuestServiceVisitor;
@@ -47,7 +47,7 @@ public class QuestParserExample {
             QuestParser.ScriptContext scriptCtx = parser.script();
             
             // 使用Visitor提取kind
-            QuestKindVisitor extractor = new QuestKindVisitor();
+            QuestHeaderVisitor extractor = new QuestHeaderVisitor();
             KindType kind = extractor.extractKind(scriptCtx);
             scriptCtx.accept(extractor);
             System.out.println("检测到kind类型: " + kind);

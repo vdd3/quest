@@ -13,6 +13,6 @@ public class FunctionCodeStatement extends CollectCodeStatement{
      */
     @Override
     public StatementType type() {
-        return null;
+        return StatementType.FUNCTION;
     }
 }

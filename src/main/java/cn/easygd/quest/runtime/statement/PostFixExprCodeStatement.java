@@ -14,6 +14,6 @@ public class PostFixExprCodeStatement extends CollectCodeStatement {
      */
     @Override
     public StatementType type() {
-        return null;
+        return StatementType.POSTFIX_EXPR;
     }
 }

@@ -1,5 +1,6 @@
 package cn.easygd.quest.runtime.module;
 
+import cn.easygd.quest.runtime.statement.FunctionCodeStatement;
 import cn.easygd.quest.runtime.statement.ProcessCodeStatement;
 
 import java.util.HashMap;
@@ -21,6 +22,11 @@ public class ServiceModule implements QuestModule {
     private Map<String, ProcessCodeStatement> processStatementMap = new HashMap<>(16);
 
     /**
+     * function statement map
+     */
+    private Map<String, FunctionCodeStatement> functionStatementMap = new HashMap<>(16);
+
+    /**
      * put process statement
      *
      * @param processName      process name
@@ -28,6 +34,16 @@ public class ServiceModule implements QuestModule {
      */
     public void putProcessStatement(String processName, ProcessCodeStatement processStatement) {
         processStatementMap.put(processName, processStatement);
+    }
+
+    /**
+     * put function statement
+     *
+     * @param functionName      function name
+     * @param functionStatement function statement
+     */
+    public void putFunctionStatement(String functionName, FunctionCodeStatement functionStatement) {
+        functionStatementMap.put(functionName, functionStatement);
     }
 
     public void setBizModule(String bizModule) {

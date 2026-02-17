@@ -14,6 +14,6 @@ public class AssignmentExprCodeStatement extends CollectCodeStatement{
      */
     @Override
     public StatementType type() {
-        return StatementType.ARRAY_ACCESS_EXPR;
+        return StatementType.ASSIGNMENT_EXPR;
     }
 }

@@ -6,7 +6,7 @@ import cn.easygd.quest.core.enums.KindType;
  * Kind信息提取器
  * 用于从解析树中提取用户的kind声明信息
  */
-public class QuestKindVisitor extends QuestParserBaseVisitor<String> {
+public class QuestHeaderVisitor extends QuestParserBaseVisitor<String> {
 
     /**
      * 访问kind声明节点，提取kind类型
