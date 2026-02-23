@@ -1,11 +1,12 @@
-package cn.easygd.quest.runtime.statement;
+package cn.easygd.quest.runtime.statement.service;
 
 import cn.easygd.quest.runtime.enums.StatementType;
+import cn.easygd.quest.runtime.statement.CollectCodeStatement;
 
 /**
  * @author VD
  */
-public class VariableCodeStatement extends CollectCodeStatement{
+public class VariableCodeStatement extends CollectCodeStatement {
     /**
      * statement type
      *

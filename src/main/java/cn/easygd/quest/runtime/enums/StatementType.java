@@ -31,6 +31,8 @@ public enum StatementType {
 
     BLOCK,
 
+    TXT,
+
     /*=====================expression======================*/
 
     PRIMARY_EXPR,

@@ -1,11 +1,12 @@
-package cn.easygd.quest.runtime.statement;
+package cn.easygd.quest.runtime.statement.service;
 
 import cn.easygd.quest.runtime.enums.StatementType;
+import cn.easygd.quest.runtime.statement.StringCodeStatement;
 
 /**
  * @author VD
  */
-public class TypeCodeStatement extends StringCodeStatement{
+public class TypeCodeStatement extends StringCodeStatement {
 
     /**
      * build content

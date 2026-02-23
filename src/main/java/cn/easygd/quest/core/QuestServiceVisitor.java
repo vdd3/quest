@@ -2,8 +2,9 @@ package cn.easygd.quest.core;
 
 import cn.easygd.quest.runtime.module.ServiceModule;
 import cn.easygd.quest.runtime.statement.CodeStatement;
-import cn.easygd.quest.runtime.statement.FunctionCodeStatement;
-import cn.easygd.quest.runtime.statement.ProcessCodeStatement;
+import cn.easygd.quest.runtime.statement.TokenCodeStatement;
+import cn.easygd.quest.runtime.statement.service.FunctionCodeStatement;
+import cn.easygd.quest.runtime.statement.service.ProcessCodeStatement;
 
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
      */
     @Override
     public Void visitBizModule(QuestParser.BizModuleContext ctx) {
-        String bizModule = ctx.IDENTIFIER().getText();
-        serviceModule.setBizModule(bizModule);
+        TokenCodeStatement inputName = getInputName(ctx.inputTxt());
+        serviceModule.setBizModule(inputName.getValue());
         return null;
     }
 
@@ -52,7 +53,8 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
 
         List<CodeStatement> codeStatements = parseCoreStatement(statement);
 
-        String processName = ctx.IDENTIFIER().getText();
+        TokenCodeStatement inputName = getInputName(ctx.inputTxt());
+        String processName = inputName.getValue();
         processCodeStatement.setName(processName);
         processCodeStatement.addAll(codeStatements);
         serviceModule.putProcessStatement(processName, processCodeStatement);
@@ -71,7 +73,8 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
     public Void visitFunctionModule(QuestParser.FunctionModuleContext ctx) {
         List<QuestParser.FunctionDefinitionContext> contextList = ctx.functionDefinition();
         for (QuestParser.FunctionDefinitionContext context : contextList) {
-            String functionName = context.IDENTIFIER().getText();
+            TokenCodeStatement inputName = getInputName(context.inputTxt());
+            String functionName = inputName.getValue();
             FunctionCodeStatement functionCodeStatement = new FunctionCodeStatement();
             List<CodeStatement> statementList = parseCoreStatement(context.statement());
             functionCodeStatement.addAll(statementList);

@@ -1,12 +1,12 @@
-package cn.easygd.quest.runtime.statement;
+package cn.easygd.quest.runtime.statement.service;
 
 import cn.easygd.quest.runtime.enums.StatementType;
+import cn.easygd.quest.runtime.statement.CollectCodeStatement;
 
 /**
  * @author VD
  */
-public class CastExprCodeStatement extends CollectCodeStatement {
-
+public class IfCodeStatement extends CollectCodeStatement {
     /**
      * statement type
      *
@@ -14,6 +14,6 @@ public class CastExprCodeStatement extends CollectCodeStatement {
      */
     @Override
     public StatementType type() {
-        return StatementType.CAST_EXPR;
+        return StatementType.IF;
     }
 }

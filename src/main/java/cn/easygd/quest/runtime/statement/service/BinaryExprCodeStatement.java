@@ -1,6 +1,7 @@
-package cn.easygd.quest.runtime.statement;
+package cn.easygd.quest.runtime.statement.service;
 
 import cn.easygd.quest.runtime.enums.StatementType;
+import cn.easygd.quest.runtime.statement.CollectCodeStatement;
 
 /**
  * @author VD

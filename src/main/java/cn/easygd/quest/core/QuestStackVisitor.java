@@ -1,7 +1,9 @@
 package cn.easygd.quest.core;
 
 import cn.easygd.quest.runtime.module.StackModule;
-import cn.easygd.quest.runtime.statement.*;
+import cn.easygd.quest.runtime.statement.CodeStatement;
+import cn.easygd.quest.runtime.statement.TokenCodeStatement;
+import cn.easygd.quest.runtime.statement.service.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +53,24 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
         TypeCodeStatement typeCodeStatement = new TypeCodeStatement();
         typeCodeStatement.add(ctx.getText());
         stackModule.setCodeStatement(typeCodeStatement);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Void visitInputTxt(QuestParser.InputTxtContext ctx) {
+        String text = ctx.IDENTIFIER().getText();
+        TokenCodeStatement txtCodeStatement = new TokenCodeStatement();
+        txtCodeStatement.setToken(QuestParser.VOCABULARY.getSymbolicName(QuestLexer.IDENTIFIER));
+        txtCodeStatement.setValue(text);
+        stackModule.setCodeStatement(txtCodeStatement);
         return null;
     }
 

@@ -1,7 +1,7 @@
 package cn.easygd.quest.runtime.module;
 
-import cn.easygd.quest.runtime.statement.FunctionCodeStatement;
-import cn.easygd.quest.runtime.statement.ProcessCodeStatement;
+import cn.easygd.quest.runtime.statement.service.FunctionCodeStatement;
+import cn.easygd.quest.runtime.statement.service.ProcessCodeStatement;
 
 import java.util.HashMap;
 import java.util.Map;

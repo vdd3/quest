@@ -17,7 +17,7 @@ public class QuestParserExample {
     public static void main(String[] args) {
         // 示例脚本内容
         String script1 = "@kind service;\n" +
-                "@business 你好;\n" +
+                "@business `订单业务`;\n" +
                 "process biz {\n" +
                 "String id = \"1\";\n" +
                 "User user = 用户服务.获取用户(id);\n" +

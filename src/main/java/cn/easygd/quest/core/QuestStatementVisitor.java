@@ -2,13 +2,16 @@ package cn.easygd.quest.core;
 
 import cn.easygd.quest.runtime.module.QuestModule;
 import cn.easygd.quest.runtime.module.StackModule;
-import cn.easygd.quest.runtime.statement.*;
+import cn.easygd.quest.runtime.statement.CodeStatement;
+import cn.easygd.quest.runtime.statement.TokenCodeStatement;
+import cn.easygd.quest.runtime.statement.service.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +44,7 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
             List<CodeStatement> codeStatements = statement.children
                     .stream()
                     .map(this::convertTree)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             if (statement instanceof QuestParser.VariableStatementContext) {
@@ -108,11 +112,30 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
         String tokenTxt = node.getText();
         // token
         int typeIndex = node.getSymbol().getType();
+
+        // ignore BACKQUOTE
+        if(QuestLexer.BACKQUOTE == typeIndex){
+            return null;
+        }
+
         String token = QuestParser.VOCABULARY.getSymbolicName(typeIndex);
 
         tokenCodeStatement.setToken(token);
         tokenCodeStatement.setValue(tokenTxt);
 
         return tokenCodeStatement;
+    }
+
+    /**
+     * get input name
+     *
+     * @param ctx parse tree
+     * @return input name
+     */
+    protected TokenCodeStatement getInputName(ParserRuleContext ctx){
+        QuestStackVisitor visitor = new QuestStackVisitor();
+        ctx.accept(visitor);
+        CodeStatement codeStatement = visitor.getModule().getCodeStatement();
+        return (TokenCodeStatement) codeStatement;
     }
 }

@@ -9,7 +9,7 @@ public enum KindType {
 
     PRD("prd", "产品"),
 
-    ;
+    ENTITY("entity", "实体");
 
     private final String code;
 

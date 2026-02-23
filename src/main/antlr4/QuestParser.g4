@@ -18,7 +18,7 @@ kindDeclaration: AT KIND kindType SEMI;
 kindType: SERVICE | PRD | ENTITY;
 
 // 业务模块规则
-bizModule: AT BUSINESS IDENTIFIER SEMI;
+bizModule: AT BUSINESS inputTxt SEMI;
 
 // 模块通用规则
 module: (bizModule newlines? serviceModule) | prdModule | entityModule;
@@ -26,7 +26,7 @@ module: (bizModule newlines? serviceModule) | prdModule | entityModule;
 // service类型模块
 serviceModule: processModule+ functionModule?;
 
-processModule: PROCESS IDENTIFIER LBRACE newlines? statement* newlines? RBRACE;
+processModule: PROCESS inputTxt LBRACE newlines? statement* newlines? RBRACE;
 functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
 
 // prd类型模块
@@ -37,7 +37,7 @@ descriptionModule: DESCRIPTION LBRACE newlines? textContent* newlines? RBRACE;
 businessModule: BUSINESS LBRACE newlines? textContent* newlines? RBRACE;
 
 // 文本内容规则（用于prd模块）
-textContent: IDENTIFIER | CHINESE_CHAR | STRING | INTEGER | FLOAT_LITERAL;
+textContent: inputTxt | CHINESE_CHAR | STRING | INTEGER | FLOAT_LITERAL;
 
 // entity类型模块
 entityModule: (classDeclaration | interfaceDeclaration | enumDeclaration)*;
@@ -79,7 +79,7 @@ typeArgument: type
 forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
 
 // 方法定义规则
-functionDefinition: type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
+functionDefinition: type inputTxt LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
 
 // 参数列表规则
 parameterList: parameter (COMMA parameter)*;
@@ -148,3 +148,7 @@ binaryOp: MULT | DIV | MOD
 newlines: NEWLINE+;
 
 usageLevel: PRIVATE | PUBLIC | PROTECTED;
+
+inputTxt: IDENTIFIER
+    | BACKQUOTE IDENTIFIER BACKQUOTE
+    ;
