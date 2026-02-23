@@ -62,7 +62,7 @@ enumBody: IDENTIFIER (ASSIGN INTEGER)? (COMMA IDENTIFIER (ASSIGN INTEGER)?)*;
 type: primitiveType | classType;
 
 // 基本数据类型规则
-primitiveType: BYTE | SHORT | INT | LONG | FLOAT | DOUBLE | CHAR | BOOLEAN | STRING_TYPE;
+primitiveType: BYTE | SHORT | INT | LONG | FLOAT | DOUBLE | CHAR | BOOLEAN | STRING_TYPE | VOID;
 
 // 类类型规则（支持泛型）
 classType: IDENTIFIER (typeArguments)? (DOT IDENTIFIER (typeArguments)?)*;
@@ -93,6 +93,7 @@ statement: type IDENTIFIER (ASSIGN (expression))? SEMI #variableStatement
          | FOR LPAREN forControl RPAREN block #forStatement
          | WHILE LPAREN expression RPAREN block #whileStatement
          | expression SEMI #expressionStatement
+         | NOTE COLON inputTxt #noteStatement
          | RETURN expression? SEMI #returnStatement;
 
 // 赋值运算符规则

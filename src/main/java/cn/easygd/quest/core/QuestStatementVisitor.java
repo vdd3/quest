@@ -56,9 +56,13 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
                 ifCodeStatement.addAll(codeStatements);
                 codeStatementList.add(ifCodeStatement);
             } else if (statement instanceof QuestParser.ForStatementContext) {
+                // TODO 循环条件
+
                 ForCodeStatement forCodeStatement = new ForCodeStatement();
                 forCodeStatement.addAll(codeStatements);
             } else if (statement instanceof QuestParser.WhileStatementContext) {
+                // 循环条件
+
                 WhileCodeStatement whileCodeStatement = new WhileCodeStatement();
                 whileCodeStatement.addAll(codeStatements);
                 codeStatementList.add(whileCodeStatement);
@@ -74,6 +78,19 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
         }
 
         return codeStatementList;
+    }
+
+    /**
+     * convert tree list to code statement list
+     *
+     * @param treeList tree list
+     * @return code statement list
+     */
+    protected List<CodeStatement> convertTree(List<ParseTree> treeList) {
+        return treeList.stream()
+                .map(this::convertTree)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -114,12 +131,13 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
         int typeIndex = node.getSymbol().getType();
 
         // ignore BACKQUOTE
-        if(QuestLexer.BACKQUOTE == typeIndex){
+        if (QuestLexer.BACKQUOTE == typeIndex) {
             return null;
         }
 
         String token = QuestParser.VOCABULARY.getSymbolicName(typeIndex);
 
+        tokenCodeStatement.setTokenIndex(typeIndex);
         tokenCodeStatement.setToken(token);
         tokenCodeStatement.setValue(tokenTxt);
 
@@ -132,7 +150,7 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
      * @param ctx parse tree
      * @return input name
      */
-    protected TokenCodeStatement getInputName(ParserRuleContext ctx){
+    protected TokenCodeStatement getInputName(ParserRuleContext ctx) {
         QuestStackVisitor visitor = new QuestStackVisitor();
         ctx.accept(visitor);
         CodeStatement codeStatement = visitor.getModule().getCodeStatement();

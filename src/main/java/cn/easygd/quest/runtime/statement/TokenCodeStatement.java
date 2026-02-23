@@ -1,11 +1,24 @@
 package cn.easygd.quest.runtime.statement;
 
+import cn.easygd.quest.core.QuestLexer;
 import cn.easygd.quest.runtime.enums.StatementType;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author VD
  */
 public class TokenCodeStatement extends CodeStatement {
+
+    private static final List<Integer> SPACE_TOKEN_INDEX = Arrays.asList(QuestLexer.COMMA, QuestLexer.NEW, QuestLexer.QUESTION);
+
+    private static final List<Integer> DOUBLE_SPACE_TOKEN_INDEX = Arrays.asList(QuestLexer.COLON, QuestLexer.DOT);
+
+    /**
+     * token index
+     */
+    private Integer tokenIndex;
 
     /**
      * token
@@ -24,7 +37,10 @@ public class TokenCodeStatement extends CodeStatement {
      */
     @Override
     public String buildContent() {
-        return "";
+        if (SPACE_TOKEN_INDEX.contains(tokenIndex)) {
+            return String.format("%s ", value);
+        }
+        return value;
     }
 
     /**
@@ -35,6 +51,14 @@ public class TokenCodeStatement extends CodeStatement {
     @Override
     public StatementType type() {
         return StatementType.TOKEN;
+    }
+
+    public Integer getTokenIndex() {
+        return tokenIndex;
+    }
+
+    public void setTokenIndex(Integer tokenIndex) {
+        this.tokenIndex = tokenIndex;
     }
 
     public void setToken(String token) {

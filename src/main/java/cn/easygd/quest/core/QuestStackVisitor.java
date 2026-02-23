@@ -69,6 +69,7 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
         String text = ctx.IDENTIFIER().getText();
         TokenCodeStatement txtCodeStatement = new TokenCodeStatement();
         txtCodeStatement.setToken(QuestParser.VOCABULARY.getSymbolicName(QuestLexer.IDENTIFIER));
+        txtCodeStatement.setTokenIndex(QuestLexer.IDENTIFIER);
         txtCodeStatement.setValue(text);
         stackModule.setCodeStatement(txtCodeStatement);
         return null;

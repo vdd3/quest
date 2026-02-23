@@ -7,6 +7,7 @@ import cn.easygd.quest.runtime.statement.CollectCodeStatement;
  * @author VD
  */
 public class FunctionCodeStatement extends CollectCodeStatement {
+
     /**
      * statement type
      *

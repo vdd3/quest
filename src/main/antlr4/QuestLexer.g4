@@ -27,6 +27,7 @@ ENTITY: 'entity' | '实体';
 REQUIREMENT: 'requirement' | '需求';
 DESCRIPTION: 'description' | '描述';
 BUSINESS: 'business' | '业务';
+NOTE: 'note' | '注释';
 
 // Java控制流关键字
 IF: 'if' | 'alt' |'如果';

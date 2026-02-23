@@ -2,6 +2,7 @@ package cn.easygd.quest.runtime.statement.service;
 
 import cn.easygd.quest.runtime.enums.StatementType;
 import cn.easygd.quest.runtime.statement.CodeStatement;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author VD
@@ -25,7 +26,11 @@ public class FunctionInvokeCodeStatement extends CodeStatement {
      */
     @Override
     public String buildContent() {
-        return "";
+        if (StringUtils.isNotBlank(arguments)) {
+            return String.format("%s(%s)", functionName, arguments);
+        } else {
+            return String.format("%s()", functionName);
+        }
     }
 
     /**
