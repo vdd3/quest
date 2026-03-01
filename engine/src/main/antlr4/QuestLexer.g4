@@ -54,16 +54,17 @@ SUPER: 'super' | '父类';
 CLASS: 'class' | '类';
 INTERFACE: 'interface' | '接口';
 ENUM: 'enum' | '枚举';
-PUBLIC: 'public';
-PROTECTED: 'protected';
-PRIVATE: 'private';
-STATIC: 'static';
-ABSTRACT: 'abstract';
-DEFAULT: 'default';
-FINAL: 'final';
-IMPLEMENTS: 'implements';
-OVERRIDE: 'override';
-NEW: 'new';
+PUBLIC: 'public' | '共有';
+PROTECTED: 'protected' | '受保护的';
+PRIVATE: 'private' | '私有';
+STATIC: 'static' | '静态';
+ABSTRACT: 'abstract' | '抽象';
+DEFAULT: 'default' | '默认';
+FINAL: 'final' | '不可变';
+IMPLEMENTS: 'implements' | '实现';
+OVERRIDE: 'override' | '重写';
+NEW: 'new' | '新建';
+THIS: 'this' | '本类';
 
 // Special value literals
 NULL: 'null' | '空';
