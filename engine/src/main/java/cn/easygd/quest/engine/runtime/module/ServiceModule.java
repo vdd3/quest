@@ -46,6 +46,14 @@ public class ServiceModule implements QuestModule {
         functionStatementMap.put(functionName, functionStatement);
     }
 
+    public Map<String, ProcessCodeStatement> getProcessStatementMap() {
+        return processStatementMap;
+    }
+
+    public Map<String, FunctionCodeStatement> getFunctionStatementMap() {
+        return functionStatementMap;
+    }
+
     public void setBizModule(String bizModule) {
         this.bizModule = bizModule;
     }

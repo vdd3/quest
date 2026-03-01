@@ -4,18 +4,18 @@ lexer grammar QuestLexer;
     package cn.easygd.quest.engine.core;
 }
 
-// 空白字符处理
+// Whitespace handling
 WS: [ \t\r\n]+ -> skip;
 
-// 注释处理
+// Comment handling
 LINE_COMMENT: '//' ~[\r\n]* -> skip;
 BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 DOC_COMMENT: '/**' .*? '*/' -> skip;
 
-// 换行符处理
+// Newline handling
 NEWLINE : '\r' '\n'? | '\n';
 
-// 关键字定义
+// Keyword definition
 KIND: 'kind' | '类型';
 SERVICE: 'service' | '服务';
 PRD: 'prd' | '产品';
@@ -23,20 +23,20 @@ PROCESS: 'process' | '逻辑';
 FUNCTION: 'function' | '函数';
 ENTITY: 'entity' | '实体';
 
-// prd模块关键字
+// prd module keywords
 REQUIREMENT: 'requirement' | '需求';
 DESCRIPTION: 'description' | '描述';
 BUSINESS: 'business' | '业务';
 NOTE: 'note' | '注释';
 
-// Java控制流关键字
+// Java control flow keywords
 IF: 'if' | 'alt' |'如果';
 ELSE: 'else' | '否则';
 FOR: 'for' | 'loop' |'循环';
 WHILE: 'while' | '当';
 RETURN: 'return' | '返回';
 
-// Java基本数据类型
+// Java basic data types
 BYTE: 'byte';
 SHORT: 'short';
 INT: 'int' | 'Integer';
@@ -48,7 +48,7 @@ BOOLEAN: 'boolean' | 'Boolean';
 STRING_TYPE: 'String';
 VOID: 'void' | 'Void';
 
-// Java继承和泛型关键字
+// Java inheritance and generics keywords
 EXTENDS: 'extends' | '继承';
 SUPER: 'super' | '父类';
 CLASS: 'class' | '类';
@@ -65,19 +65,19 @@ IMPLEMENTS: 'implements';
 OVERRIDE: 'override';
 NEW: 'new';
 
-// 特殊值字面量
+// Special value literals
 NULL: 'null' | '空';
 TRUE: 'true' | '是';
 FALSE: 'false' | '否';
 
-// 算术运算符
+// Arithmetic operators
 PLUS: '+';
 MINUS: '-';
 MULT: '*';
 DIV: '/';
 MOD: '%';
 
-// 比较运算符
+// Comparison operators
 EQ: '==';
 NEQ: '!=';
 LT: '<';
@@ -85,12 +85,12 @@ GT: '>';
 LE: '<=';
 GE: '>=';
 
-// 逻辑运算符
+// Logical operators
 AND: '&&';
 OR: '||';
 NOT: '!';
 
-// 赋值运算符
+// Assignment operators
 ASSIGN: '=';
 PLUS_ASSIGN: '+=';
 MINUS_ASSIGN: '-=';
@@ -98,11 +98,11 @@ MULT_ASSIGN: '*=';
 DIV_ASSIGN: '/=';
 MOD_ASSIGN: '%=';
 
-// 自增自减运算符
+// Increment and decrement operators
 INC: '++';
 DEC: '--';
 
-// 分隔符
+// Delimiters
 LPAREN: '(';
 RPAREN: ')';
 LBRACE: '{';
@@ -117,13 +117,13 @@ QUESTION: '?';
 AT: '@';
 BACKQUOTE: '`';
 
-// 中文字符支持
+// Chinese character support
 CHINESE_CHAR: [\u4e00-\u9fff];
 
-// 标识符规则（支持中英文）
+// Identifier rules (support Chinese and English)
 IDENTIFIER: [A-Za-z_][A-Za-z0-9_]* | CHINESE_CHAR+;
 
-// 字面量
+// Literals
 INTEGER: [0-9]+;
 FLOAT_LITERAL: [0-9]+ ('.' [0-9]+)? ([eE] [+-]? [0-9]+)?;
 STRING: '"' (ESC | ~["\\])* '"';

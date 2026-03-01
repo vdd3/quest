@@ -8,38 +8,38 @@ options {
     package cn.easygd.quest.engine.core;
 }
 
-// 脚本顶层规则
+// Script top-level rule
 script: kindDeclaration module EOF;
 
-// kind声明规则
+// kind declaration rule
 kindDeclaration: AT KIND kindType SEMI;
 
-// kind类型规则
+// kind type rule
 kindType: SERVICE | PRD | ENTITY;
 
-// 业务模块规则
+// Business module rule
 bizModule: AT BUSINESS inputTxt SEMI;
 
-// 模块通用规则
+// Module general rule
 module: (bizModule newlines? serviceModule) | prdModule | entityModule;
 
-// service类型模块
+// service type module
 serviceModule: processModule+ functionModule?;
 
 processModule: PROCESS inputTxt LBRACE newlines? statement* newlines? RBRACE;
 functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
 
-// prd类型模块
+// prd type module
 prdModule: requirementModule newlines? descriptionModule newlines? businessModule;
 
 requirementModule: REQUIREMENT LBRACE newlines? textContent* newlines? RBRACE;
 descriptionModule: DESCRIPTION LBRACE newlines? textContent* newlines? RBRACE;
 businessModule: BUSINESS LBRACE newlines? textContent* newlines? RBRACE;
 
-// 文本内容规则（用于prd模块）
+// Text content rule (for prd module)
 textContent: inputTxt | CHINESE_CHAR | STRING | INTEGER | FLOAT_LITERAL;
 
-// entity类型模块
+// entity type module
 entityModule: (classDeclaration | interfaceDeclaration | enumDeclaration)*;
 
 classDeclaration: usageLevel ABSTRACT? CLASS IDENTIFIER (EXTENDS classType)? (IMPLEMENTS classType (COMMA classType)*)? LBRACE newlines? classBody* newlines? RBRACE;
@@ -58,36 +58,36 @@ enumDeclaration: ENUM IDENTIFIER LBRACE newlines? enumBody* newlines? RBRACE;
 
 enumBody: IDENTIFIER (ASSIGN INTEGER)? (COMMA IDENTIFIER (ASSIGN INTEGER)?)*;
 
-// 类型系统规则
+// Type system rule
 type: primitiveType | classType;
 
-// 基本数据类型规则
+// Basic data type rule
 primitiveType: BYTE | SHORT | INT | LONG | FLOAT | DOUBLE | CHAR | BOOLEAN | STRING_TYPE | VOID;
 
-// 类类型规则（支持泛型）
+// Class type rule (supports generics)
 classType: IDENTIFIER (typeArguments)? (DOT IDENTIFIER (typeArguments)?)*;
 
-// 类型参数规则
+// Type parameter rule
 typeArguments: LT typeArgument (COMMA typeArgument)* GT;
 
-// 类型参数规则（支持extends和super）
+// Type parameter rule (supports extends and super)
 typeArgument: type
             | QUESTION (EXTENDS type)?
             | QUESTION SUPER type;
 
-// 变量声明规则（用于for循环，不包含分号）
+// Variable declaration rule (for for loop, without semicolon)
 forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
 
-// 方法定义规则
+// Method definition rule
 functionDefinition: type inputTxt LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
 
-// 参数列表规则
+// Parameter list rule
 parameterList: parameter (COMMA parameter)*;
 
-// 参数规则
+// Parameter rule
 parameter: type IDENTIFIER;
 
-// 语句通用规则
+// Statement general rule
 statement: type IDENTIFIER (ASSIGN (expression))? SEMI #variableStatement
          | IF LPAREN expression RPAREN block (ELSE block)? #ifStatement
          | FOR LPAREN forControl RPAREN block #forStatement
@@ -96,19 +96,19 @@ statement: type IDENTIFIER (ASSIGN (expression))? SEMI #variableStatement
          | NOTE COLON inputTxt #noteStatement
          | RETURN expression? SEMI #returnStatement;
 
-// 赋值运算符规则
+// Assignment operator rule
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN;
 
-// 代码块规则
+// Code block rule
 block: LBRACE newlines? statement* newlines? RBRACE;
 
-// for控制规则
+// for control rule
 forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
 
-// 参数列表规则（用于方法调用）
+// Argument list rule (for method calls)
 argumentList: expression (COMMA expression)*;
 
-// 表达式层级规则
+// Expression hierarchy rule
 expression: primary #primaryExpr
           | methodInvokeExpression #methodInvokeExpr
           | expression LBRACK expression RBRACK #arrayAccessExpr
@@ -126,13 +126,13 @@ methodInvokeExpression: IDENTIFIER LPAREN argumentList? RPAREN #currentMethodInv
     | IDENTIFIER DOT IDENTIFIER LPAREN argumentList? RPAREN #classMethodInvokeExpr
     ;
 
-// 基本表达式规则
+// Primary expression rule
 primary: literal
        | IDENTIFIER
        | SUPER (DOT IDENTIFIER)?
        | LPAREN expression RPAREN;
 
-// 字面量规则
+// Literal rule
 literal: INTEGER
        | FLOAT_LITERAL
        | STRING
@@ -140,7 +140,7 @@ literal: INTEGER
        | FALSE
        | NULL;
 
-// 二元运算符规则
+// Binary operator rule
 binaryOp: MULT | DIV | MOD
         | PLUS | MINUS
         | LT | GT | LE | GE | EQ | NEQ
