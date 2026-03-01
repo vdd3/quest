@@ -7,7 +7,7 @@
     <parent>
         <groupId>cn.easygd</groupId>
         <artifactId>quest</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${project.version}</version>
     </parent>
 
     <artifactId>api</artifactId>
