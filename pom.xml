@@ -63,6 +63,8 @@
         <antlr.version>4.9.3</antlr.version>
         <lang3.version>3.18.0</lang3.version>
         <collections4.version>4.4</collections4.version>
+        <guava.version>32.0.0-jre</guava.version>
+        <common-io.version>2.14.0</common-io.version>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +120,18 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${collections4.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${common-io.version}</version>
             </dependency>
 
             <!-- JUnit for testing -->

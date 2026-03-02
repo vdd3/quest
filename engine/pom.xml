@@ -31,6 +31,26 @@
             <groupId>cn.easygd</groupId>
             <artifactId>api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -98,14 +118,14 @@
             </plugin>
 
             <!-- Run with exec:java -->
-            <!--            <plugin>-->
-            <!--                <groupId>org.codehaus.mojo</groupId>-->
-            <!--                <artifactId>exec-maven-plugin</artifactId>-->
-            <!--                <version>3.1.0</version>-->
-            <!--                <configuration>-->
-            <!--                    <mainClass>com.quest.Main</mainClass>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>cn.easygd.quest.engine.runtime.cli.QuestCommand</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
