@@ -27,4 +27,14 @@ public class PrdMarkdownInfo extends MarkdownInfo {
                 .link("Quest官方文档", "https://www.yuque.com/vd_developer/quest");
         return content.toString();
     }
+
+    /**
+     * file suffix
+     *
+     * @return file suffix
+     */
+    @Override
+    public String fileSuffix() {
+        return "产品说明书.md";
+    }
 }

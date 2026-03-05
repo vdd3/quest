@@ -6,6 +6,13 @@ package cn.easygd.quest.engine.utils.markdown;
 public abstract class MarkdownInfo extends MarkdownWrapper {
 
     /**
+     * file suffix
+     *
+     * @return file suffix
+     */
+    public abstract String fileSuffix();
+
+    /**
      * new line
      *
      * @return MarkdownInfo

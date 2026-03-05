@@ -48,4 +48,14 @@ public class ProgramMarkdownInfo extends MarkdownInfo {
     public String create() {
         return content.toString();
     }
+
+    /**
+     * file suffix
+     *
+     * @return file suffix
+     */
+    @Override
+    public String fileSuffix() {
+        return "系统说明书.md";
+    }
 }

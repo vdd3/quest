@@ -1,6 +1,19 @@
 package cn.easygd.quest.engine.runtime.cli;
 
+import cn.easygd.quest.engine.core.QuestLexer;
+import cn.easygd.quest.engine.core.QuestParser;
+import cn.easygd.quest.engine.core.QuestStatementVisitor;
+import cn.easygd.quest.engine.core.QuestVisitorManager;
+import cn.easygd.quest.engine.core.enums.KindType;
+import cn.easygd.quest.engine.runtime.executor.QuestScriptExecutor;
+import cn.easygd.quest.engine.runtime.executor.QuestScriptExecutorManager;
+import cn.easygd.quest.engine.runtime.module.QuestModule;
 import cn.easygd.quest.engine.runtime.module.ServiceModule;
+import cn.easygd.quest.engine.utils.ScriptKindHelper;
+import cn.easygd.quest.engine.utils.markdown.MarkdownInfo;
+import com.google.common.collect.Lists;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -13,6 +26,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * 文件夹解析命令
@@ -87,11 +101,42 @@ public class ParseCommand implements Callable<Integer> {
                 System.out.println("找到 " + filesToParse.size() + " 个文件待解析");
             }
 
-            // 解析所有文件
-            List<ParsingResult> results = parseFiles(filesToParse);
+            List<String> scriptList = Lists.newArrayList();
 
-            // 输出结果
-            outputResults(results);
+            for (String script : scriptList) {
+                // 创建词法分析器
+                QuestLexer lexer = new QuestLexer(CharStreams.fromString(script));
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+                // 创建语法分析器
+                QuestParser parser = new QuestParser(tokens);
+                // TODO 错误监听器
+
+                // 先解析一次获取kind类型
+                QuestParser.ScriptContext scriptCtx = parser.script();
+
+                // 提取kind
+                KindType kind = ScriptKindHelper.getScriptKind(scriptCtx);
+                QuestStatementVisitor<? extends QuestModule> visitor = QuestVisitorManager.findVisitor(kind);
+                scriptCtx.accept(visitor);
+
+                // 获取executor
+                QuestScriptExecutor executor = QuestScriptExecutorManager.findExecutor(kind);
+                executor.addModule(visitor.getModule());
+            }
+
+            List<QuestScriptExecutor> executorList = QuestScriptExecutorManager.findAllExecutor();
+
+            // gen markdown
+            List<MarkdownInfo> markdownInfoList = executorList.stream()
+                    .map(QuestScriptExecutor::execute)
+                    .collect(Collectors.toList());
+
+            // TODO write markdown
+            markdownInfoList.forEach(markdownInfo -> {
+
+            });
+
 
             // 显示统计信息
             if (showStats) {
