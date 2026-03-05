@@ -1,13 +1,12 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
 import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author VD
  */
-public class FunctionInvokeCodeStatement extends CodeStatement {
+public class FunctionInvokeCodeStatement extends ExpressionCodeStatement {
 
     /**
      * function name
