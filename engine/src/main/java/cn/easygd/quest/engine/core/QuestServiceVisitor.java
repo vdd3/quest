@@ -32,7 +32,7 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
      */
     @Override
     public Void visitBizModule(QuestParser.BizModuleContext ctx) {
-        TokenCodeStatement inputName = getInputName(ctx.inputTxt());
+        TokenCodeStatement inputName = getInputTxt(ctx.inputTxt());
         serviceModule.setBizModule(inputName.getValue());
         return null;
     }
@@ -53,7 +53,7 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
 
         List<CodeStatement> codeStatements = parseCoreStatement(statement);
 
-        TokenCodeStatement inputName = getInputName(ctx.inputTxt());
+        TokenCodeStatement inputName = getInputTxt(ctx.inputTxt());
         String processName = inputName.getValue();
         processCodeStatement.setName(processName);
         processCodeStatement.addAll(codeStatements);
@@ -77,7 +77,7 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
             String returnType = context.type().getText();
 
             // function name
-            TokenCodeStatement inputName = getInputName(context.inputTxt());
+            TokenCodeStatement inputName = getInputTxt(context.inputTxt());
             String functionName = inputName.getValue();
 
             // function parameter

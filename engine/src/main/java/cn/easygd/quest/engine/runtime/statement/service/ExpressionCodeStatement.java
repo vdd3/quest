@@ -1,19 +1,10 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
-import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.CollectCodeStatement;
+import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 
 /**
  * @author VD
  */
-public class ExpressionCodeStatement extends CollectCodeStatement {
-    /**
-     * statement type
-     *
-     * @return statement type
-     */
-    @Override
-    public StatementType type() {
-        return StatementType.EXPRESSION;
-    }
+public abstract class ExpressionCodeStatement extends CodeStatement {
+
 }

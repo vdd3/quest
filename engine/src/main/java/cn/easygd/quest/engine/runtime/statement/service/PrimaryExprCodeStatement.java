@@ -1,12 +1,16 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
 import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.StringCodeStatement;
 
 /**
  * @author VD
  */
-public class PrimaryExprCodeStatement extends StringCodeStatement {
+public class PrimaryExprCodeStatement extends ExpressionCodeStatement {
+
+    /**
+     * primary
+     */
+    private String primary;
 
     /**
      * build content
@@ -15,7 +19,7 @@ public class PrimaryExprCodeStatement extends StringCodeStatement {
      */
     @Override
     public String buildContent() {
-        return getContent();
+        return primary;
     }
 
     /**
@@ -28,4 +32,11 @@ public class PrimaryExprCodeStatement extends StringCodeStatement {
         return StatementType.PRIMARY_EXPR;
     }
 
+    public String getPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(String primary) {
+        this.primary = primary;
+    }
 }

@@ -1,12 +1,11 @@
 package cn.easygd.quest.engine.core;
 
 import cn.easygd.quest.engine.runtime.module.StackModule;
-import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 import cn.easygd.quest.engine.runtime.statement.TokenCodeStatement;
 import cn.easygd.quest.engine.runtime.statement.service.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
  * @author VD
@@ -65,32 +64,15 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      * @param ctx
      */
     @Override
-    public Void visitInputTxt(QuestParser.InputTxtContext ctx) {
-        String text = ctx.IDENTIFIER().getText();
-        TokenCodeStatement txtCodeStatement = new TokenCodeStatement();
-        txtCodeStatement.setToken(QuestParser.VOCABULARY.getSymbolicName(QuestLexer.IDENTIFIER));
-        txtCodeStatement.setTokenIndex(QuestLexer.IDENTIFIER);
-        txtCodeStatement.setValue(text);
-        stackModule.setCodeStatement(txtCodeStatement);
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
-    @Override
     public Void visitAssignmentExpr(QuestParser.AssignmentExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
+        String text = ctx.IDENTIFIER().getText();
+        String assignmentOp = ctx.assignmentOperator().getText();
+        ExpressionCodeStatement expr = (ExpressionCodeStatement) convertTree(ctx.expression());
 
         AssignmentExprCodeStatement statement = new AssignmentExprCodeStatement();
-        statement.addAll(statementList);
+        statement.setVariable(text);
+        statement.setAssignmentOperator(assignmentOp);
+        statement.setExpr(expr);
         stackModule.setCodeStatement(statement);
         return null;
     }
@@ -105,11 +87,12 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitPrefixExpr(QuestParser.PrefixExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
+        String prefixText = ctx.prefix.getText();
+        ExpressionCodeStatement expr = (ExpressionCodeStatement) convertTree(ctx.expression());
+
         PrefixExprCodeStatement statement = new PrefixExprCodeStatement();
-        statement.addAll(statementList);
+        statement.setPrefix(prefixText);
+        statement.setExpr(expr);
         stackModule.setCodeStatement(statement);
         return null;
     }
@@ -124,12 +107,12 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitArrayAccessExpr(QuestParser.ArrayAccessExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
+        ExpressionCodeStatement leftExpr = (ExpressionCodeStatement) convertTree(ctx.expression(0));
+        ExpressionCodeStatement rightExpr = (ExpressionCodeStatement) convertTree(ctx.expression(1));
 
         ArrayExprCodeStatement statement = new ArrayExprCodeStatement();
-        statement.addAll(statementList);
+        statement.setLeftExpr(leftExpr);
+        statement.setRightExpr(rightExpr);
         stackModule.setCodeStatement(statement);
         return null;
     }
@@ -144,9 +127,17 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitPrimaryExpr(QuestParser.PrimaryExprContext ctx) {
-        PrimaryExprCodeStatement primaryExprCodeStatement = new PrimaryExprCodeStatement();
-        primaryExprCodeStatement.add(ctx.getText());
-        stackModule.setCodeStatement(primaryExprCodeStatement);
+        PrimaryExprCodeStatement statement = new PrimaryExprCodeStatement();
+
+        QuestParser.ExpressionContext expression = ctx.primary().expression();
+        if (Objects.nonNull(expression)) {
+            ExpressionCodeStatement expr = (ExpressionCodeStatement) convertTree(expression);
+            statement.setPrimary(String.format("(%s)", expr.buildContent()));
+        } else {
+            statement.setPrimary(ctx.getText());
+        }
+
+        stackModule.setCodeStatement(statement);
         return null;
     }
 
@@ -159,13 +150,36 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      * @param ctx
      */
     @Override
+    public Void visitNewExpr(QuestParser.NewExprContext ctx) {
+        String classType = ctx.classType().getText();
+        String arguments = ctx.parameterList().getText();
+
+        NewExprCodeStatement statement = new NewExprCodeStatement();
+        statement.setClassType(classType);
+        statement.setArguments(arguments);
+        stackModule.setCodeStatement(statement);
+        return super.visitNewExpr(ctx);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
     public Void visitTernaryExpr(QuestParser.TernaryExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
-        TernaryExprCodeStatement ternaryExprCodeStatement = new TernaryExprCodeStatement();
-        ternaryExprCodeStatement.addAll(statementList);
-        stackModule.setCodeStatement(ternaryExprCodeStatement);
+        ExpressionCodeStatement conditionExpr = (ExpressionCodeStatement) convertTree(ctx.expression(0));
+        ExpressionCodeStatement trueExpr = (ExpressionCodeStatement) convertTree(ctx.expression(1));
+        ExpressionCodeStatement falseExpr = (ExpressionCodeStatement) convertTree(ctx.expression(2));
+
+        TernaryExprCodeStatement statement = new TernaryExprCodeStatement();
+        statement.setCondition(conditionExpr);
+        statement.setTrueExpr(trueExpr);
+        statement.setFalseExpr(falseExpr);
+        stackModule.setCodeStatement(statement);
         return null;
     }
 
@@ -179,13 +193,13 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitCastExpr(QuestParser.CastExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
+        String type = ctx.type().getText();
+        ExpressionCodeStatement expr = (ExpressionCodeStatement) convertTree(ctx.expression());
 
-        CastExprCodeStatement castExprCodeStatement = new CastExprCodeStatement();
-        castExprCodeStatement.addAll(statementList);
-        stackModule.setCodeStatement(castExprCodeStatement);
+        CastExprCodeStatement statement = new CastExprCodeStatement();
+        statement.setCastType(type);
+        statement.setExpr(expr);
+        stackModule.setCodeStatement(statement);
         return null;
     }
 
@@ -199,13 +213,15 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitBinaryExpr(QuestParser.BinaryExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
+        ExpressionCodeStatement leftExpr = (ExpressionCodeStatement) convertTree(ctx.expression(0));
+        ExpressionCodeStatement rightExpr = (ExpressionCodeStatement) convertTree(ctx.expression(1));
+        String binaryOp = ctx.binaryOp().getText();
 
-        BinaryExprCodeStatement binaryExprCodeStatement = new BinaryExprCodeStatement();
-        binaryExprCodeStatement.addAll(statementList);
-        stackModule.setCodeStatement(binaryExprCodeStatement);
+        BinaryExprCodeStatement statement = new BinaryExprCodeStatement();
+        statement.setLeftExpr(leftExpr);
+        statement.setRightExpr(rightExpr);
+        statement.setBinaryOperator(binaryOp);
+        stackModule.setCodeStatement(statement);
         return null;
     }
 
@@ -219,12 +235,12 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
      */
     @Override
     public Void visitPostfixExpr(QuestParser.PostfixExprContext ctx) {
-        List<CodeStatement> statementList = ctx.children.stream()
-                .map(this::convertTree)
-                .collect(Collectors.toList());
+        String postfixText = ctx.postfix.getText();
+        ExpressionCodeStatement expr = (ExpressionCodeStatement) convertTree(ctx.expression());
 
         PostFixExprCodeStatement statement = new PostFixExprCodeStatement();
-        statement.addAll(statementList);
+        statement.setPostfix(postfixText);
+        statement.setExpr(expr);
         stackModule.setCodeStatement(statement);
         return null;
     }

@@ -1,12 +1,12 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
 import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.CollectCodeStatement;
+import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 
 /**
  * @author VD
  */
-public class ForCodeStatement extends CollectCodeStatement {
+public class ForCodeStatement extends CodeStatement {
 
     /**
      * for control
@@ -14,6 +14,15 @@ public class ForCodeStatement extends CollectCodeStatement {
     private String forControl;
 
 
+    /**
+     * build content
+     *
+     * @return content
+     */
+    @Override
+    public String buildContent() {
+        return "";
+    }
 
     /**
      * statement type

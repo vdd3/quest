@@ -21,7 +21,7 @@ public abstract class CollectCodeStatement extends CodeStatement{
      */
     @Override
     public String buildContent() {
-        return content.stream().map(CodeStatement::buildContent).collect(Collectors.joining());
+        return content.stream().map(CodeStatement::buildContent).collect(Collectors.joining("\n"));
     }
 
     public void add(CodeStatement content) {

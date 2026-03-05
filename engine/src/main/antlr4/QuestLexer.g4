@@ -16,60 +16,138 @@ DOC_COMMENT: '/**' .*? '*/' -> skip;
 NEWLINE : '\r' '\n'? | '\n';
 
 // Keyword definition
-KIND: 'kind' | '类型';
-SERVICE: 'service' | '服务';
-PRD: 'prd' | '产品';
-PROCESS: 'process' | '逻辑';
-FUNCTION: 'function' | '函数';
-ENTITY: 'entity' | '实体';
+KIND: 'kind'
+    | '类型' { setText("kind");}
+    ;
+SERVICE: 'service'
+    | '服务' { setText("service");}
+    ;
+PRD: 'prd'
+    | '产品' { setText("prd");}
+    ;
+PROCESS: 'process'
+    | '逻辑' { setText("process");}
+    ;
+FUNCTION: 'function'
+    | '函数' { setText("function");}
+    ;
+ENTITY: 'entity'
+    | '实体' { setText("entity");}
+    ;
 
 // prd module keywords
-REQUIREMENT: 'requirement' | '需求';
-DESCRIPTION: 'description' | '描述';
-BUSINESS: 'business' | '业务';
-NOTE: 'note' | '注释';
+REQUIREMENT: 'requirement'
+    | '需求' { setText("requirement");}
+    ;
+DESCRIPTION: 'description'
+    | '描述' { setText("description");}
+    ;
+BUSINESS: 'business'
+    | '业务' { setText("business");}
+    ;
+NOTE: 'note'
+    | '注释' { setText("note");}
+    ;
 
 // Java control flow keywords
-IF: 'if' | 'alt' |'如果';
-ELSE: 'else' | '否则';
-FOR: 'for' | 'loop' |'循环';
-WHILE: 'while' | '当';
-RETURN: 'return' | '返回';
+IF: 'if'
+    | 'alt' { setText("if");}
+    |'如果' { setText("if");}
+    ;
+ELSE: 'else'
+    | '否则' { setText("else");}
+    ;
+FOR: 'for'
+    | 'loop' { setText("for");}
+    |'循环' { setText("for");}
+    ;
+WHILE: 'while'
+    | '当' { setText("while");}
+    ;
+RETURN: 'return'
+    | '返回' { setText("return");}
+    ;
 
 // Java basic data types
 BYTE: 'byte';
 SHORT: 'short';
-INT: 'int' | 'Integer';
-LONG: 'long' | 'Long';
+INT: 'int'
+    | 'Integer'
+    ;
+LONG: 'long'
+    | 'Long'
+    ;
 FLOAT: 'float';
 DOUBLE: 'double';
 CHAR: 'char';
-BOOLEAN: 'boolean' | 'Boolean';
+BOOLEAN: 'boolean'
+    | 'Boolean'
+    ;
 STRING_TYPE: 'String';
-VOID: 'void' | 'Void';
+VOID: 'void'
+    | 'Void'
+    ;
 
 // Java inheritance and generics keywords
-EXTENDS: 'extends' | '继承';
-SUPER: 'super' | '父类';
-CLASS: 'class' | '类';
-INTERFACE: 'interface' | '接口';
-ENUM: 'enum' | '枚举';
-PUBLIC: 'public' | '共有';
-PROTECTED: 'protected' | '受保护的';
-PRIVATE: 'private' | '私有';
-STATIC: 'static' | '静态';
-ABSTRACT: 'abstract' | '抽象';
-DEFAULT: 'default' | '默认';
-FINAL: 'final' | '不可变';
-IMPLEMENTS: 'implements' | '实现';
-OVERRIDE: 'override' | '重写';
-NEW: 'new' | '新建';
-THIS: 'this' | '本类';
+EXTENDS: 'extends'
+    | '继承' { setText("extends");}
+    ;
+SUPER: 'super'
+    | '父类' { setText("super");}
+    ;
+CLASS: 'class'
+    | '类' { setText("class");}
+    ;
+INTERFACE: 'interface'
+    | '接口' { setText("interface");}
+    ;
+ENUM: 'enum'
+    | '枚举' { setText("enum");}
+    ;
+PUBLIC: 'public'
+    | '共有' { setText("public");}
+    ;
+PROTECTED: 'protected'
+    | '受保护的' { setText("protected");}
+    ;
+PRIVATE: 'private'
+    | '私有' { setText("private");}
+    ;
+STATIC: 'static'
+    | '静态' { setText("static");}
+    ;
+ABSTRACT: 'abstract'
+    | '抽象' { setText("abstract");}
+    ;
+DEFAULT: 'default'
+    | '默认' { setText("default");}
+    ;
+FINAL: 'final'
+    | '不可变' { setText("final");}
+    ;
+IMPLEMENTS: 'implements'
+    | '实现' { setText("implements");}
+    ;
+OVERRIDE: 'override'
+    | '重写' { setText("override");}
+    ;
+NEW: 'new'
+    | '新建' { setText("new");}
+    ;
+THIS: 'this'
+    | '本类' { setText("this");}
+    ;
 
 // Special value literals
-NULL: 'null' | '空';
-TRUE: 'true' | '是';
-FALSE: 'false' | '否';
+NULL: 'null'
+    | '空' { setText("null");}
+    ;
+TRUE: 'true'
+    | '是' { setText("true");}
+    ;
+FALSE: 'false'
+    | '否' { setText("false");}
+    ;
 
 // Arithmetic operators
 PLUS: '+';
@@ -193,4 +271,3 @@ THIS_LT: LT -> type(IDENTIFIER);
 
 // quit this mode
 SEMI_QUIT: SEMI -> popMode;
-BACKQUOTE_QUIT: BACKQUOTE -> popMode;

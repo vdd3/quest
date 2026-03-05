@@ -1,12 +1,17 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
 import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.StringCodeStatement;
+import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 
 /**
  * @author VD
  */
-public class TypeCodeStatement extends StringCodeStatement {
+public class NoteCodeStatement extends CodeStatement {
+
+    /**
+     * note
+     */
+    private String note;
 
     /**
      * build content
@@ -15,7 +20,7 @@ public class TypeCodeStatement extends StringCodeStatement {
      */
     @Override
     public String buildContent() {
-        return content;
+        return String.format("// TODO %s", note);
     }
 
     /**
@@ -25,6 +30,14 @@ public class TypeCodeStatement extends StringCodeStatement {
      */
     @Override
     public StatementType type() {
-        return StatementType.TYPE;
+        return StatementType.NOTE;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

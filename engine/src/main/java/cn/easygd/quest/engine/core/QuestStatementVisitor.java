@@ -41,39 +41,83 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
 
         // build code statement
         for (QuestParser.StatementContext statement : statementList) {
-            List<CodeStatement> codeStatements = statement.children
-                    .stream()
-                    .map(this::convertTree)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
             if (statement instanceof QuestParser.VariableStatementContext) {
+                QuestParser.VariableStatementContext variableStatement = (QuestParser.VariableStatementContext) statement;
+
                 VariableCodeStatement variableCodeStatement = new VariableCodeStatement();
-                variableCodeStatement.addAll(codeStatements);
+                String type = variableStatement.type().getText();
+                String variableName = variableStatement.IDENTIFIER().getText();
+
+                //  variable
+                variableCodeStatement.setVariableType(type);
+                variableCodeStatement.setVariableName(variableName);
+
+                // expr
+                QuestParser.ExpressionContext expression = variableStatement.expression();
+                if (Objects.nonNull(expression)) {
+                    variableCodeStatement.setExpr((ExpressionCodeStatement) convertTree(expression));
+                }
+
                 codeStatementList.add(variableCodeStatement);
             } else if (statement instanceof QuestParser.IfStatementContext) {
+                QuestParser.IfStatementContext ifStatement = (QuestParser.IfStatementContext) statement;
+
                 IfCodeStatement ifCodeStatement = new IfCodeStatement();
-                ifCodeStatement.addAll(codeStatements);
+                // statement
+                ExpressionCodeStatement condition = (ExpressionCodeStatement) convertTree(ifStatement.expression());
+                // if  block
+                BlockCodeStatement block = (BlockCodeStatement) convertTree(ifStatement.block(0));
+                if (ifStatement.ELSE() != null) {
+                    // else block
+                    BlockCodeStatement elseBlock = (BlockCodeStatement) convertTree(ifStatement.block(1));
+                    ifCodeStatement.setElseBlock(elseBlock);
+                }
+                ifCodeStatement.setCondition(condition);
+                ifCodeStatement.setBlock(block);
+
                 codeStatementList.add(ifCodeStatement);
             } else if (statement instanceof QuestParser.ForStatementContext) {
-                // TODO 循环条件
-
+                QuestParser.ForStatementContext forStatement = (QuestParser.ForStatementContext) statement;
                 ForCodeStatement forCodeStatement = new ForCodeStatement();
-                forCodeStatement.addAll(codeStatements);
+
+
+                // TODO 循环条件
+//                ExpressionCodeStatement condition = (ExpressionCodeStatement) convertTree(ifStatement.expression());
+
+                codeStatementList.add(forCodeStatement);
             } else if (statement instanceof QuestParser.WhileStatementContext) {
-                // 循环条件
+                QuestParser.WhileStatementContext whileStatement = (QuestParser.WhileStatementContext) statement;
 
                 WhileCodeStatement whileCodeStatement = new WhileCodeStatement();
-                whileCodeStatement.addAll(codeStatements);
+                // statement
+                ExpressionCodeStatement condition = (ExpressionCodeStatement) convertTree(whileStatement.expression());
+                // if  block
+                BlockCodeStatement block = (BlockCodeStatement) convertTree(whileStatement.block());
+                whileCodeStatement.setCondition(condition);
+                whileCodeStatement.setBlock(block);
+
                 codeStatementList.add(whileCodeStatement);
             } else if (statement instanceof QuestParser.ExpressionStatementContext) {
-                ExpressionCodeStatement expressionCodeStatement = new ExpressionCodeStatement();
-                expressionCodeStatement.addAll(codeStatements);
+                ExpressionCodeStatement expressionCodeStatement = (ExpressionCodeStatement) convertTree(statement);
                 codeStatementList.add(expressionCodeStatement);
             } else if (statement instanceof QuestParser.ReturnStatementContext) {
+                QuestParser.ReturnStatementContext returnStatement = (QuestParser.ReturnStatementContext) statement;
+
                 ReturnCodeStatement returnCodeStatement = new ReturnCodeStatement();
-                returnCodeStatement.addAll(codeStatements);
+                // statement
+                QuestParser.ExpressionContext expression = returnStatement.expression();
+                if (Objects.nonNull(expression)) {
+                    ExpressionCodeStatement returnValue = (ExpressionCodeStatement) convertTree(expression);
+                    returnCodeStatement.setReturnValue(returnValue);
+                }
+
                 codeStatementList.add(returnCodeStatement);
+            } else if (statement instanceof QuestParser.NoteStatementContext) {
+                QuestParser.NoteStatementContext noteStatement = (QuestParser.NoteStatementContext) statement;
+
+                NoteCodeStatement noteCodeStatement = new NoteCodeStatement();
+                noteCodeStatement.setNote(getInputTxt(noteStatement.inputTxt()).getValue());
+                codeStatementList.add(noteCodeStatement);
             }
         }
 
@@ -150,10 +194,12 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
      * @param ctx parse tree
      * @return input name
      */
-    protected TokenCodeStatement getInputName(ParserRuleContext ctx) {
-        QuestStackVisitor visitor = new QuestStackVisitor();
-        ctx.accept(visitor);
-        CodeStatement codeStatement = visitor.getModule().getCodeStatement();
-        return (TokenCodeStatement) codeStatement;
+    protected TokenCodeStatement getInputTxt(QuestParser.InputTxtContext ctx) {
+        String text = ctx.IDENTIFIER().getText();
+        TokenCodeStatement txtCodeStatement = new TokenCodeStatement();
+        txtCodeStatement.setToken(QuestParser.VOCABULARY.getSymbolicName(QuestLexer.IDENTIFIER));
+        txtCodeStatement.setTokenIndex(QuestLexer.IDENTIFIER);
+        txtCodeStatement.setValue(text);
+        return txtCodeStatement;
     }
 }

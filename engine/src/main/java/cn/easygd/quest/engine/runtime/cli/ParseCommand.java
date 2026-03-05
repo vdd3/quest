@@ -1,9 +1,6 @@
 package cn.easygd.quest.engine.runtime.cli;
 
-import cn.easygd.quest.engine.core.QuestParser;
-import cn.easygd.quest.engine.core.QuestServiceVisitor;
 import cn.easygd.quest.engine.runtime.module.ServiceModule;
-import cn.easygd.quest.engine.runtime.service.FolderParserService;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -145,48 +142,48 @@ public class ParseCommand implements Callable<Integer> {
      * 解析文件列表
      */
     private List<ParsingResult> parseFiles(List<Path> files) {
-        FolderParserService parserService = new FolderParserService();
-        FolderParserService.ParseConfig config = new FolderParserService.ParseConfig();
-        config.setSkipErrors(true);
-        config.setMaxThreads(4);
-
-        if (verbose) {
-            config.setProgressCallback(progress -> {
-                System.out.printf("进度: %.1f%% (%d/%d) - %s [%s]%n",
-                        progress.getProgressPercentage(),
-                        progress.getProcessedFiles(),
-                        progress.getTotalFiles(),
-                        progress.getCurrentFile(),
-                        progress.getStatus());
-            });
-        }
-
-        List<FolderParserService.ParseResult> parseResults = parserService.parseFolder(
-                inputDirectory.toPath(), config);
-
-        // 转换为旧的结果格式（为了兼容现有代码）
-        List<ParsingResult> results = new ArrayList<>();
-        totalFiles = parseResults.size();
-
-        for (FolderParserService.ParseResult parseResult : parseResults) {
-            ParsingResult result = new ParsingResult(
-                    parseResult.getFilePath(),
-                    parseResult.isSuccess(),
-                    parseResult.getModule() instanceof ServiceModule ? (ServiceModule) parseResult.getModule() : null,
-                    parseResult.getErrorMessage()
-            );
-            results.add(result);
-
-            if (result.isSuccess()) {
-                parsedFiles++;
-            } else {
-                errorFiles++;
-                errorMessages.add(parseResult.getFilePath().toString() + ": " + parseResult.getErrorMessage());
-            }
-        }
-
-        parserService.shutdown();
-        return results;
+//        FolderParserService parserService = new FolderParserService();
+//        FolderParserService.ParseConfig config = new FolderParserService.ParseConfig();
+//        config.setSkipErrors(true);
+//        config.setMaxThreads(4);
+//
+//        if (verbose) {
+//            config.setProgressCallback(progress -> {
+//                System.out.printf("进度: %.1f%% (%d/%d) - %s [%s]%n",
+//                        progress.getProgressPercentage(),
+//                        progress.getProcessedFiles(),
+//                        progress.getTotalFiles(),
+//                        progress.getCurrentFile(),
+//                        progress.getStatus());
+//            });
+//        }
+//
+//        List<FolderParserService.ParseResult> parseResults = parserService.parseFolder(
+//                inputDirectory.toPath(), config);
+//
+//        // 转换为旧的结果格式（为了兼容现有代码）
+//        List<ParsingResult> results = new ArrayList<>();
+//        totalFiles = parseResults.size();
+//
+//        for (FolderParserService.ParseResult parseResult : parseResults) {
+//            ParsingResult result = new ParsingResult(
+//                    parseResult.getFilePath(),
+//                    parseResult.isSuccess(),
+//                    parseResult.getModule() instanceof ServiceModule ? (ServiceModule) parseResult.getModule() : null,
+//                    parseResult.getErrorMessage()
+//            );
+//            results.add(result);
+//
+//            if (result.isSuccess()) {
+//                parsedFiles++;
+//            } else {
+//                errorFiles++;
+//                errorMessages.add(parseResult.getFilePath().toString() + ": " + parseResult.getErrorMessage());
+//            }
+//        }
+//
+//        parserService.shutdown();
+        return null;
     }
 
     /**
@@ -194,19 +191,19 @@ public class ParseCommand implements Callable<Integer> {
      */
     private ParsingResult parseSingleFile(Path filePath) throws IOException {
         try {
-            // 读取文件内容
-            String content = new String(Files.readAllBytes(filePath));
+//            // 读取文件内容
+//            String content = new String(Files.readAllBytes(filePath));
+//
+//            // 使用 ANTLR 解析
+//            QuestParser parser = new QuestParser(content);
+//            QuestServiceVisitor visitor = new QuestServiceVisitor();
+//
+//            // 访问解析树
+//            parser.script().accept(visitor);
+//
+//            ServiceModule module = visitor.getModule();
 
-            // 使用 ANTLR 解析
-            QuestParser parser = new QuestParser(content);
-            QuestServiceVisitor visitor = new QuestServiceVisitor();
-
-            // 访问解析树
-            parser.script().accept(visitor);
-
-            ServiceModule module = visitor.getModule();
-
-            return new ParsingResult(filePath, true, module, null);
+            return new ParsingResult(filePath, true, null, null);
 
         } catch (Exception e) {
             return new ParsingResult(filePath, false, null, e.getMessage());

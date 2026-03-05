@@ -88,7 +88,7 @@ parameterList: parameter (COMMA parameter)*;
 parameter: type IDENTIFIER;
 
 // Statement general rule
-statement: type IDENTIFIER (ASSIGN (expression))? SEMI #variableStatement
+statement: type IDENTIFIER (ASSIGN expression)? SEMI #variableStatement
          | IF LPAREN expression RPAREN block (ELSE block)? #ifStatement
          | FOR LPAREN forControl RPAREN block #forStatement
          | WHILE LPAREN expression RPAREN block #whileStatement
@@ -118,7 +118,7 @@ expression: primary #primaryExpr
           | expression QUESTION expression COLON expression #ternaryExpr
           | LPAREN type RPAREN expression #castExpr
           | IDENTIFIER assignmentOperator expression #assignmentExpr
-          | NEW classType LPAREN argumentList? RPAREN #newExpr
+          | NEW classType LPAREN parameterList? RPAREN #newExpr
           ;
 
 // method invoke expression

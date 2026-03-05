@@ -8,7 +8,7 @@ public abstract class StringCodeStatement extends CodeStatement {
     /**
      * content
      */
-    private String content;
+    protected String content;
 
     public void add(String content) {
         this.content = content;

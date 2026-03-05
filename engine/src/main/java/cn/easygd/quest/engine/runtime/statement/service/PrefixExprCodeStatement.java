@@ -1,12 +1,22 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
 import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.CollectCodeStatement;
 
 /**
  * @author VD
  */
-public class PrefixExprCodeStatement extends CollectCodeStatement {
+public class PrefixExprCodeStatement extends ExpressionCodeStatement {
+
+    /**
+     * prefix
+     */
+    private String prefix;
+
+    /**
+     * expression
+     */
+    private ExpressionCodeStatement expr;
+
     /**
      * build content
      *
@@ -14,7 +24,7 @@ public class PrefixExprCodeStatement extends CollectCodeStatement {
      */
     @Override
     public String buildContent() {
-        return "";
+        return String.format("%s %s", prefix, expr.buildContent());
     }
 
     /**
@@ -25,5 +35,21 @@ public class PrefixExprCodeStatement extends CollectCodeStatement {
     @Override
     public StatementType type() {
         return StatementType.PREFIX_EXPR;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public void setExpr(ExpressionCodeStatement expr) {
+        this.expr = expr;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public ExpressionCodeStatement getExpr() {
+        return expr;
     }
 }

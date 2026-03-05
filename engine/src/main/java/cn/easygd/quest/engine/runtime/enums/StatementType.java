@@ -31,7 +31,7 @@ public enum StatementType {
 
     BLOCK,
 
-    TXT,
+    NOTE,
 
     /*=====================expression======================*/
 
@@ -55,6 +55,7 @@ public enum StatementType {
 
     FUNCTION_INVOKE_EXPR,
 
+    NEW_EXPR,
     ;
 
 }

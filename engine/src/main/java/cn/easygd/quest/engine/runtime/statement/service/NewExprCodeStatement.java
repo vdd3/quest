@@ -1,18 +1,17 @@
 package cn.easygd.quest.engine.runtime.statement.service;
 
 import cn.easygd.quest.engine.runtime.enums.StatementType;
-import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author VD
  */
-public class FunctionInvokeCodeStatement extends CodeStatement {
+public class NewExprCodeStatement extends ExpressionCodeStatement {
 
     /**
-     * function name
+     * class type
      */
-    private String functionName;
+    private String classType;
 
     /**
      * arguments
@@ -27,9 +26,10 @@ public class FunctionInvokeCodeStatement extends CodeStatement {
     @Override
     public String buildContent() {
         if (StringUtils.isNotBlank(arguments)) {
-            return String.format("%s(%s)", functionName, arguments);
+            arguments = arguments.replaceAll(",", ", ");
+            return String.format("new %s(%s)", classType, arguments);
         } else {
-            return String.format("%s()", functionName);
+            return String.format("new %s()", classType);
         }
     }
 
@@ -40,22 +40,22 @@ public class FunctionInvokeCodeStatement extends CodeStatement {
      */
     @Override
     public StatementType type() {
-        return StatementType.FUNCTION_INVOKE_EXPR;
+        return StatementType.NEW_EXPR;
     }
 
-    public void setFunctionName(String functionName) {
-        this.functionName = functionName;
+    public String getClassType() {
+        return classType;
     }
 
-    public void setArguments(String arguments) {
-        this.arguments = arguments;
-    }
-
-    public String getFunctionName() {
-        return functionName;
+    public void setClassType(String classType) {
+        this.classType = classType;
     }
 
     public String getArguments() {
         return arguments;
+    }
+
+    public void setArguments(String arguments) {
+        this.arguments = arguments;
     }
 }
