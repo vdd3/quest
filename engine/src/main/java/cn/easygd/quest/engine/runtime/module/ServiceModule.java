@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @author VD
  */
-public class ServiceModule implements QuestModule {
+public class ServiceModule extends QuestModule {
 
     /**
      * prd to service biz
@@ -19,12 +19,12 @@ public class ServiceModule implements QuestModule {
     /**
      * process statement map
      */
-    private Map<String, ProcessCodeStatement> processStatementMap = new HashMap<>(16);
+    private final Map<String, ProcessCodeStatement> processStatementMap = new HashMap<>(16);
 
     /**
      * function statement map
      */
-    private Map<String, FunctionCodeStatement> functionStatementMap = new HashMap<>(16);
+    private final Map<String, FunctionCodeStatement> functionStatementMap = new HashMap<>(16);
 
     /**
      * put process statement

@@ -5,7 +5,7 @@ import cn.easygd.quest.engine.runtime.statement.CodeStatement;
 /**
  * @author VD
  */
-public class StackModule implements QuestModule{
+public class StackModule extends QuestModule {
 
     /**
      * code statement

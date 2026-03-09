@@ -10,6 +10,7 @@ import cn.easygd.quest.api.annotation.QuestComponent;
  */
 @QuestComponent(
         alis = "用户服务",
+        bizGroup = "用户管理",
         description = "提供用户相关的业务功能"
 )
 public class UserService {
@@ -22,55 +23,12 @@ public class UserService {
      */
     @QuestComponent(
             alis = "获取用户",
+            bizGroup = "用户管理",
             description = "根据用户ID获取用户详细信息"
     )
     public String getUserInfo(String userId) {
 
         return "User info for ID: " + userId;
-    }
-
-    /**
-     * 创建新用户
-     *
-     * @param userData 用户数据
-     * @return 创建结果
-     */
-    @QuestComponent(
-            alis = "创建用户",
-            description = "创建新的用户账户"
-    )
-    public boolean createUser(String userData) {
-
-        return true;
-    }
-
-    /**
-     * 更新用户信息
-     *
-     * @param userId  用户ID
-     * @param updates 更新数据
-     * @return 更新结果
-     */
-    @QuestComponent(
-            alis = "更新用户",
-            description = "更新指定用户的个人信息"
-    )
-    public boolean updateUser(String userId, String updates) {
-        return true;
-    }
-
-    /**
-     * 删除用户
-     *
-     * @param userId 用户ID
-     * @return 删除结果
-     */
-    @QuestComponent(
-            alis = "删除用户",
-            description = "删除指定用户账户"
-    )
-    public boolean deleteUser(String userId) {
-        return true;
     }
 
     /**

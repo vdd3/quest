@@ -122,7 +122,9 @@ public class ParseCommand implements Callable<Integer> {
 
                 // 获取executor
                 QuestScriptExecutor executor = QuestScriptExecutorManager.findExecutor(kind);
-                executor.addModule(visitor.getModule());
+                QuestModule module = visitor.getModule();
+                module.setOriginalScript(script);
+                executor.addModule(module);
             }
 
             List<QuestScriptExecutor> executorList = QuestScriptExecutorManager.findAllExecutor();

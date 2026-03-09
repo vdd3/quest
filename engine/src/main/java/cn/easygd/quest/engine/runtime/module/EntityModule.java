@@ -3,5 +3,5 @@ package cn.easygd.quest.engine.runtime.module;
 /**
  * @author VD
  */
-public class EntityModule implements QuestModule {
+public class EntityModule extends QuestModule {
 }

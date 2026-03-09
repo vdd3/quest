@@ -18,6 +18,13 @@ public @interface QuestComponent {
     String alis();
 
     /**
+     * biz group
+     *
+     * @return biz group
+     */
+    String bizGroup();
+
+    /**
      * component description
      *
      * @return description

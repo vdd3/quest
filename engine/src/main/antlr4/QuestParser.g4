@@ -21,10 +21,10 @@ kindType: SERVICE | PRD | ENTITY;
 bizModule: AT BUSINESS inputTxt SEMI;
 
 // Module general rule
-module: (bizModule newlines? serviceModule) | prdModule | entityModule;
+module: serviceModule | prdModule | entityModule;
 
 // service type module
-serviceModule: processModule+ functionModule?;
+serviceModule: bizModule newlines? processModule+ functionModule?;
 
 processModule: PROCESS inputTxt LBRACE newlines? statement* newlines? RBRACE;
 functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
@@ -32,7 +32,7 @@ functionModule: FUNCTION LBRACE newlines? functionDefinition* newlines? RBRACE;
 // prd type module
 prdModule: requirementModule newlines? descriptionModule newlines? businessModule;
 
-requirementModule: REQUIREMENT LBRACE newlines? textContent* newlines? RBRACE;
+requirementModule: REQUIREMENT LBRACE newlines? (INTEGER DOT textContent)* newlines? RBRACE;
 descriptionModule: DESCRIPTION LBRACE newlines? textContent* newlines? RBRACE;
 businessModule: BUSINESS LBRACE newlines? textContent* newlines? RBRACE;
 
