@@ -329,6 +329,45 @@ public class QuestStackVisitor extends QuestStatementVisitor<StackModule> {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Void visitForControlExpr(QuestParser.ForControlExprContext ctx) {
+        ForControlExprCodeStatement statement = new ForControlExprCodeStatement();
+        ExpressionCodeStatement leftExpr = (ExpressionCodeStatement) convertTree(ctx.expression(0));
+        ExpressionCodeStatement rightExpr = (ExpressionCodeStatement) convertTree(ctx.expression(1));
+        ExpressionCodeStatement conditionExpr = (ExpressionCodeStatement) convertTree(ctx.expression(2));
+        statement.setLeftExpr(leftExpr);
+        statement.setRightExpr(rightExpr);
+        statement.setConditionExpr(conditionExpr);
+        stackModule.setCodeStatement(statement);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Void visitForVariableDeclaration(QuestParser.ForVariableDeclarationContext ctx) {
+        ForVariableDeclCodeStatement statement = new ForVariableDeclCodeStatement();
+        statement.setVariableName(ctx.IDENTIFIER(0).getText());
+        statement.setVariableType(ctx.classType().getText());
+        statement.setVariableValue(ctx.IDENTIFIER(1).getText());
+        stackModule.setCodeStatement(statement);
+        return null;
+    }
+
+    /**
      * 获取模块
      *
      * @return 模块

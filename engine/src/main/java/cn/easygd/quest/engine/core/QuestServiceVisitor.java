@@ -73,20 +73,24 @@ public class QuestServiceVisitor extends QuestStatementVisitor<ServiceModule> {
     public Void visitFunctionModule(QuestParser.FunctionModuleContext ctx) {
         List<QuestParser.FunctionDefinitionContext> contextList = ctx.functionDefinition();
         for (QuestParser.FunctionDefinitionContext context : contextList) {
-            // TODO return type
-            String returnType = context.type().getText();
+            FunctionCodeStatement functionCodeStatement = new FunctionCodeStatement();
 
+            // return type
+            String returnType = context.type().getText();
+            // usageLevel
+            String usageLevel = context.usageLevel().getText();
             // function name
             TokenCodeStatement inputName = getInputTxt(context.inputTxt());
             String functionName = inputName.getValue();
-
             // function parameter
-            context.parameterList();
-
-            FunctionCodeStatement functionCodeStatement = new FunctionCodeStatement();
+            String parameters = context.parameterList().getText();
+            // function content
             List<CodeStatement> statementList = parseCoreStatement(context.statement());
             functionCodeStatement.addAll(statementList);
-
+            functionCodeStatement.setName(functionName);
+            functionCodeStatement.setParameters(parameters);
+            functionCodeStatement.setUsageLevel(usageLevel);
+            functionCodeStatement.setReturnType(returnType);
             serviceModule.putFunctionStatement(functionName,functionCodeStatement);
         }
         return null;

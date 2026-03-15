@@ -11,8 +11,12 @@ public class ForCodeStatement extends CodeStatement {
     /**
      * for control
      */
-    private String forControl;
+    private ForControlCodeStatement forControl;
 
+    /**
+     * for block
+     */
+    private BlockCodeStatement forBlock;
 
     /**
      * build content
@@ -21,7 +25,7 @@ public class ForCodeStatement extends CodeStatement {
      */
     @Override
     public String buildContent() {
-        return "";
+        return String.format("for (%s) %s", forControl.buildContent(), forBlock.buildContent());
     }
 
     /**
@@ -32,5 +36,21 @@ public class ForCodeStatement extends CodeStatement {
     @Override
     public StatementType type() {
         return StatementType.FOR;
+    }
+
+    public ForControlCodeStatement getForControl() {
+        return forControl;
+    }
+
+    public void setForControl(ForControlCodeStatement forControl) {
+        this.forControl = forControl;
+    }
+
+    public BlockCodeStatement getForBlock() {
+        return forBlock;
+    }
+
+    public void setForBlock(BlockCodeStatement forBlock) {
+        this.forBlock = forBlock;
     }
 }

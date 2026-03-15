@@ -80,9 +80,15 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
                 QuestParser.ForStatementContext forStatement = (QuestParser.ForStatementContext) statement;
                 ForCodeStatement forCodeStatement = new ForCodeStatement();
 
+                // for control
+                QuestParser.ForControlContext forControlContext = forStatement.forControl();
+                ForControlCodeStatement forControl = (ForControlCodeStatement) convertTree(forControlContext);
 
-                // TODO 循环条件
-//                ExpressionCodeStatement condition = (ExpressionCodeStatement) convertTree(ifStatement.expression());
+                // for block
+                BlockCodeStatement block = (BlockCodeStatement) convertTree(forStatement.block());
+
+                forCodeStatement.setForControl(forControl);
+                forCodeStatement.setForBlock(block);
 
                 codeStatementList.add(forCodeStatement);
             } else if (statement instanceof QuestParser.WhileStatementContext) {
@@ -98,8 +104,10 @@ public abstract class QuestStatementVisitor<T extends QuestModule> extends Quest
 
                 codeStatementList.add(whileCodeStatement);
             } else if (statement instanceof QuestParser.ExpressionStatementContext) {
-                ExpressionCodeStatement expressionCodeStatement = (ExpressionCodeStatement) convertTree(statement);
-                codeStatementList.add(expressionCodeStatement);
+                ExprStrCodeStatement exprStrCodeStatement = new ExprStrCodeStatement();
+                ExpressionCodeStatement expr = (ExpressionCodeStatement) convertTree(statement);
+                exprStrCodeStatement.setExpr(expr);
+                codeStatementList.add(exprStrCodeStatement);
             } else if (statement instanceof QuestParser.ReturnStatementContext) {
                 QuestParser.ReturnStatementContext returnStatement = (QuestParser.ReturnStatementContext) statement;
 

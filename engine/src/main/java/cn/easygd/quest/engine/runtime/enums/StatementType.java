@@ -11,6 +11,12 @@ public enum StatementType {
 
     FUNCTION,
 
+    REQUIREMENT,
+
+    DESCRIPTION,
+
+    BUSINESS,
+
     /*=====================stack module======================*/
 
     VARIABLE,
@@ -32,6 +38,8 @@ public enum StatementType {
     BLOCK,
 
     NOTE,
+
+    FOR_CONTROL,
 
     /*=====================expression======================*/
 
@@ -56,6 +64,6 @@ public enum StatementType {
     FUNCTION_INVOKE_EXPR,
 
     NEW_EXPR,
-    ;
 
+    ;
 }

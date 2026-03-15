@@ -45,7 +45,7 @@ entityModule: (classDeclaration | interfaceDeclaration | enumDeclaration)*;
 classDeclaration: usageLevel ABSTRACT? CLASS IDENTIFIER (EXTENDS classType)? (IMPLEMENTS classType (COMMA classType)*)? LBRACE newlines? classBody* newlines? RBRACE;
 
 classBody: usageLevel STATIC? FINAL? type IDENTIFIER (ASSIGN expression)? SEMI
-    | (AT OVERRIDE newlines)? usageLevel type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE
+    | (AT IDENTIFIER newlines?)? usageLevel type IDENTIFIER LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE
     ;
 
 interfaceDeclaration: INTERFACE IDENTIFIER LBRACE newlines? interfaceBody* newlines? RBRACE;
@@ -75,11 +75,8 @@ typeArgument: type
             | QUESTION (EXTENDS type)?
             | QUESTION SUPER type;
 
-// Variable declaration rule (for for loop, without semicolon)
-forVariableDeclaration: type IDENTIFIER (ASSIGN expression)?;
-
 // Method definition rule
-functionDefinition: type inputTxt LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
+functionDefinition: usageLevel? type inputTxt LPAREN parameterList? RPAREN LBRACE newlines? statement* newlines? RBRACE;
 
 // Parameter list rule
 parameterList: parameter (COMMA parameter)*;
@@ -103,7 +100,9 @@ assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSI
 block: LBRACE newlines? statement* newlines? RBRACE;
 
 // for control rule
-forControl: (forVariableDeclaration | expression)? SEMI expression? SEMI expression?;
+forControl: expression SEMI expression SEMI expression #forControlExpr
+          | classType IDENTIFIER COLON IDENTIFIER #forVariableDeclaration
+          ;
 
 // Argument list rule (for method calls)
 argumentList: expression (COMMA expression)*;
